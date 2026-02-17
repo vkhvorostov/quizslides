@@ -1,0 +1,110 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="windows-1251">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Интерактивное голосование · просмотр</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f6fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 24px;
+        }
+
+        .participant-panel {
+            width: 100%;
+            max-width: 800px;
+            background: #f8fafd;
+            padding: 28px 32px;
+            display: flex;
+            flex-direction: column;
+            border-radius: 36px;
+            box-shadow: 0 25px 60px -15px rgba(0, 20, 30, 0.25);
+            border: 1px solid #e9edf4;
+        }
+
+        .participant-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .participant-question {
+            font-size: 2rem;
+            font-weight: 650;
+            color: #0d1f31;
+            line-height: 1.2;
+            margin: 20px 0 32px 0;
+            letter-spacing: -0.01em;
+        }
+
+        .poll-options {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-bottom: 40px;
+        }
+
+        .option-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #ffffff;
+            border-radius: 60px;
+            border: 1px solid #dae2ed;
+            padding: 12px 20px;
+            transition: 0.1s;
+        }
+
+            .option-row i {
+                color: #8ca0b7;
+                font-size: 1.2rem;
+                width: 24px;
+                text-align: center;
+            }
+
+        .option-text {
+            flex: 1;
+            font-weight: 500;
+            font-size: 1.2rem;
+            color: #1a2c3f;
+            background: transparent;
+            border: none;
+            outline: none;
+            pointer-events: none;
+            user-select: text;
+        }
+
+            .option-text::placeholder {
+                color: #b1c3d6;
+            }
+    </style>
+</head>
+<body>
+    <div class="participant-panel">
+        <div class="participant-header"></div>
+        <div class="participant-question">Тема голосования</div>
+        <div class="poll-options">
+            <div class="option-row">
+                <i>○</i>
+                <span class="option-text">Вариант 1</span>
+            </div>
+            <div class="option-row">
+                <i>○</i>
+                <span class="option-text">Вариант 2</span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
