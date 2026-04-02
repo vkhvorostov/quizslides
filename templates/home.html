@@ -1,0 +1,151 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}QuizSlides - Интерактивная платформа для образования{% endblock %}
+
+{% block extra_css %}
+<style>
+    .hero {
+        position: relative;
+        background: linear-gradient(135deg, #f5f7fa 0%, #ffffff 100%);
+        padding-top: 80px;
+    }
+    .hero-pattern {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: radial-gradient(circle at 30% 50%, rgba(21, 204, 114, 0.05) 0%, transparent 30%),
+                          radial-gradient(circle at 70% 80%, rgba(21, 204, 114, 0.05) 0%, transparent 40%);
+        pointer-events: none;
+    }
+    .code-block {
+        max-width: 900px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+    .participant-label {
+        color: black;
+        font-size: 16px;
+        font-weight: 500;
+        white-space: nowrap;
+    }
+    .code-input {
+        flex: 1;
+        height: 60px;
+        background-color: #f0f0f0;
+        border: none;
+        border-radius: 15px;
+        padding: 0 20px;
+        font-size: 18px;
+    }
+    .join-button {
+        height: 60px;
+        background-color: #15CC72;
+        color: white;
+        border: none;
+        border-radius: 15px;
+        padding: 0 30px;
+        font-size: 18px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+    .join-button:hover {
+        background-color: #0fa55c;
+    }
+    .feature-square {
+        height: 280px;
+        background: linear-gradient(135deg, #e5e7eb 0%, #f3f4f6 100%);
+        border-radius: 25px;
+        border: 2px solid #d1d5db;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .feature-square:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12);
+    }
+    .feature-square-inner {
+        width: 85%;
+        height: 85%;
+        background-color: #f9fafb;
+        border-radius: 20px;
+        opacity: 0.9;
+        border: 1px solid #e5e7eb;
+    }
+    .footer {
+        border-top: 1px solid #eee;
+        margin-top: 100px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+    <section id="home" class="hero min-vh-100 d-flex align-items-center">
+        <div class="hero-pattern"></div>
+        <div class="container">
+            <div class="row justify-content-center text-center" style="margin-top: -50px;">
+                <div class="col-lg-8">
+                    <h1 class="display-6 fw-bold mb-3">
+                        Универсальная платформа для лекций, семинаров и студенческих мероприятий
+                    </h1>
+                </div>
+            </div>
+
+            <div class="row justify-content-center text-center">
+                <div class="col-lg-8">
+                    <div class="code-block">
+                        <span class="participant-label"><h3>Вы участник?</h3></span>
+                        <input type="text" class="code-input" placeholder="ВВЕДИТЕ КОД">
+                        <button class="join-button">Присоединиться</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container" style="margin-top: 100px;">
+                <div class="text-center mb-5">
+                    <h2 class="display-4 fw-bold mb-3">
+                        Возможности платформы
+                    </h2>
+                </div>
+                <div class="row g-4 justify-content-center">
+                    <div class="col-md-6 col-lg-3">
+                        <div class="feature-square w-100">
+                            <div class="feature-square-inner"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="feature-square w-100">
+                            <div class="feature-square-inner"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="feature-square w-100">
+                            <div class="feature-square-inner"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="feature-square w-100">
+                            <div class="feature-square-inner"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer id="contact" class="footer bg-white py-4">
+        <div class="container">
+            <p class="footer-text">
+                &copy; Новосибирский государственный технический университет 2026
+            </p>
+        </div>
+    </footer>
+{% endblock %}

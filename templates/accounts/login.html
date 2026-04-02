@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}Вход - QuizSlides{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow border-0">
+                <div class="card-body p-5">
+                    <h2 class="text-center mb-4 fw-bold">Вход в аккаунт</h2>
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="id_username" class="form-label">Имя пользователя</label>
+                            <input type="text" name="username" id="id_username" class="form-control form-control-lg" placeholder="Введите имя пользователя" required>
+                            {% if form.username.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ form.username.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="id_password" class="form-label">Пароль</label>
+                            <input type="password" name="password" id="id_password" class="form-control form-control-lg" placeholder="Введите пароль" required>
+                            {% if form.password.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ form.password.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <button type="submit" class="btn btn-success btn-lg w-100 mb-3">Войти</button>
+                    </form>
+                    
+                    <p class="text-center mt-4">
+                        Нет аккаунта? <a href="{% url 'accounts:signup' %}" class="text-success fw-bold">Зарегистрироваться</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

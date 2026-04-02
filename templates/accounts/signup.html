@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block title %}Регистрация - QuizSlides{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow border-0">
+                <div class="card-body p-5">
+                    <h2 class="text-center mb-4 fw-bold">Создание аккаунта</h2>
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="id_username" class="form-label">Имя пользователя</label>
+                            <input type="text" name="username" id="id_username" class="form-control form-control-lg" placeholder="Придумайте имя пользователя" required>
+                            {% if form.username.help_text %}
+                                <div class="form-text">{{ form.username.help_text }}</div>
+                            {% endif %}
+                            {% if form.username.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ form.username.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_password1" class="form-label">Пароль</label>
+                            <input type="password" name="password1" id="id_password1" class="form-control form-control-lg" placeholder="Введите пароль" required>
+                            {% if form.password1.help_text %}
+                                <div class="form-text">{{ form.password1.help_text }}</div>
+                            {% endif %}
+                            {% if form.password1.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ form.password1.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="id_password2" class="form-label">Подтверждение пароля</label>
+                            <input type="password" name="password2" id="id_password2" class="form-control form-control-lg" placeholder="Повторите пароль" required>
+                            {% if form.password2.help_text %}
+                                <div class="form-text">{{ form.password2.help_text }}</div>
+                            {% endif %}
+                            {% if form.password2.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ form.password2.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <button type="submit" class="btn btn-success btn-lg w-100 mb-3">Зарегистрироваться</button>
+                    </form>
+                    
+                    <p class="text-center mt-4">
+                        Уже есть аккаунт? <a href="{% url 'accounts:login' %}" class="text-success fw-bold">Войти</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
