@@ -1,41 +1,65 @@
+{% load django_bootstrap5 %}
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}QuizSlides{% endblock %}</title>
+
+    {% bootstrap_css %}
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 </head>
-<body>
-    <nav>
-        <div class="container">
-            <h1>QuizSlides</h1>
-            <ul>
-                {% if user.is_authenticated %}
-                    <li><span style="color: #667eea;">Привет, {{ user.username }}!</span></li>
-                    <li><a href="{% url 'accounts:logout' %}">Выход</a></li>
-                {% else %}
-                    <li><a href="{% url 'accounts:login' %}">Вход</a></li>
-                    <li><a href="{% url 'accounts:signup' %}">Регистрация</a></li>
-                {% endif %}
-            </ul>
-        </div>
-    </nav>
-    
-    <div class="container">
-        {% if messages %}
-        <div class="messages">
-            {% for message in messages %}
-            <div class="alert alert-{{ message.tags }}">
-                {{ message }}
+<body class="d-flex flex-column min-vh-100" style="font-family: 'Inter', sans-serif;">
+
+    <header class="container-fluid d-flex justify-content-between align-items-center py-4 px-md-5">
+        <a href="/" class="d-flex align-items-center gap-2 fs-4 fw-bold text-decoration-none text-dark">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+            QuizSlides
+        </a>
+
+        <div class="d-flex align-items-center gap-3">
+            <div class="d-flex align-items-center gap-1 text-secondary me-2">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="2" y1="12" x2="22" y2="12"></line>
+                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                </svg>
+                RU
             </div>
-            {% endfor %}
+
+            {% if user.is_authenticated %}
+                <span class="fw-semibold d-none d-sm-block text-dark">Привет, {{ user.username }}!</span>
+                <a href="{% url 'accounts:logout' %}" class="btn btn-outline-dark fw-semibold px-4 py-2">Выход</a>
+            {% else %}
+                <a href="{% url 'accounts:login' %}" class="btn btn-outline-dark fw-semibold px-4 py-2 d-none d-sm-block">Войти</a>
+                <a href="{% url 'accounts:signup' %}" class="btn btn-success fw-semibold px-4 py-2">Регистрация</a>
+            {% endif %}
         </div>
-        {% endif %}
-        
-        <div class="content">
-            {% block content %}
-            {% endblock %}
+    </header>
+
+    {% if messages %}
+    <div class="container mt-2">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Закрыть"></button>
         </div>
+        {% endfor %}
     </div>
+    {% endif %}
+
+    <main class="flex-grow-1 d-flex flex-column">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    {% bootstrap_javascript %}
 </body>
 </html>

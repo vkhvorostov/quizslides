@@ -1,128 +1,34 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}QuizSlides{% endblock %}</title>
+{% extends 'base.html' %}
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+{% block title %}Главная | QuizSlides{% endblock %}
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+{% block content %}
+<div class="text-center d-flex flex-column justify-content-center flex-grow-1 py-5" style="background-image: radial-gradient(circle at 50% 50%, rgba(240, 249, 245, 0.5) 0%, rgba(255, 255, 255, 1) 100%);">
 
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #ffffff;
-            /* Легкий градиент на фоне */
-            background-image: radial-gradient(circle at 50% 50%, rgba(240, 249, 245, 0.5) 0%, rgba(255, 255, 255, 1) 100%);
-        }
+    <div class="mb-5 pb-4">
+        <h1 class="display-5 fw-bold text-dark mb-5 mx-auto" style="max-width: 800px; line-height: 1.2;">
+            Универсальная платформа для лекций, семинаров и студенческих мероприятий
+        </h1>
 
-        .btn-custom-green {
-            background-color: #10B981;
-            border-color: #10B981;
-            color: white;
-        }
-        .btn-custom-green:hover {
-            background-color: #0d9668;
-            border-color: #0d9668;
-            color: white;
-        }
+        <div class="d-flex flex-column flex-md-row justify-content-center align-items-center gap-3">
+            <span class="fs-4 fw-semibold text-dark">Вы участник?</span>
 
-        .input-gray {
-            background-color: #F3F4F6 !important;
-            color: #6B7280;
-        }
-        .input-gray:focus {
-            box-shadow: 0 0 0 0.25rem rgba(16, 185, 129, 0.25) !important;
-            border-color: transparent;
-        }
-        .input-gray::placeholder {
-            font-size: 0.85rem;
-            letter-spacing: 0.5px;
-        }
-
-        .feature-card {
-            width: 240px;
-            height: 240px;
-            background-color: #E5E7EB;
-            border-radius: 20px;
-        }
-    </style>
-</head>
-<body class="d-flex flex-column min-vh-100">
-
-    <header class="container-fluid d-flex justify-content-between align-items-center py-4 px-md-5">
-
-        <a href="/" class="d-flex align-items-center gap-2 fs-4 fw-bold text-decoration-none text-dark">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="10"></circle>
-                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
-                <line x1="12" y1="17" x2="12.01" y2="17"></line>
-            </svg>
-            QuizSlides
-        </a>
-
-        <div class="d-flex align-items-center gap-3">
-            <div class="d-flex align-items-center gap-1 text-secondary me-2">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <line x1="2" y1="12" x2="22" y2="12"></line>
-                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
-                </svg>
-                RU
-            </div>
-
-            {% if user.is_authenticated %}
-                <span class="fw-semibold d-none d-sm-block text-dark">Привет, {{ user.username }}!</span>
-                <a href="{% url 'accounts:logout' %}" class="btn btn-outline-dark fw-semibold px-4 py-2">Выход</a>
-            {% else %}
-                <a href="{% url 'accounts:login' %}" class="btn btn-outline-dark fw-semibold px-4 py-2 d-none d-sm-block">Войти</a>
-                <a href="{% url 'accounts:signup' %}" class="btn btn-custom-green fw-semibold px-4 py-2">Регистрация</a>
-            {% endif %}
+            <form action="#" method="GET" class="d-flex flex-column flex-md-row gap-3">
+                <input type="text" name="code" class="form-control form-control-lg text-center border-0 bg-light shadow-none" placeholder="ВВЕДИТЕ КОД" style="width: 200px;" required>
+                <button type="submit" class="btn btn-success btn-lg fw-semibold px-4 py-3">Присоединиться</button>
+            </form>
         </div>
-    </header>
-
-    {% if messages %}
-    <div class="container mt-2">
-        {% for message in messages %}
-        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-            {{ message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Закрыть"></button>
-        </div>
-        {% endfor %}
     </div>
-    {% endif %}
 
-    <main class="container text-center flex-grow-1 d-flex flex-column justify-content-center py-5">
-        {% block content %}
+    <div class="mt-4">
+        <h2 class="display-6 fw-bold text-dark mb-5">Возможности платформы</h2>
 
-        <div class="mb-5 pb-4">
-            <h1 class="display-5 fw-bold text-dark mb-5" style="max-width: 800px; margin: 0 auto; line-height: 1.2;">
-                Универсальная платформа для лекций, семинаров и студенческих мероприятий
-            </h1>
-
-            <div class="d-flex flex-column flex-md-row justify-content-center align-items-center gap-3">
-                <span class="fs-4 fw-semibold text-dark">Вы участник?</span>
-                <input type="text" class="form-control text-center border-0 input-gray p-3" placeholder="ВВЕДИТЕ КОД" style="width: 200px;">
-                <button class="btn btn-custom-green fw-semibold px-4 py-3" style="font-size: 1rem;">Присоединиться</button>
-            </div>
+        <div class="d-flex flex-wrap justify-content-center gap-4">
+            <div class="bg-secondary bg-opacity-10 rounded-4 shadow-sm" style="width: 240px; height: 240px;"></div>
+            <div class="bg-secondary bg-opacity-10 rounded-4 shadow-sm" style="width: 240px; height: 240px;"></div>
+            <div class="bg-secondary bg-opacity-10 rounded-4 shadow-sm" style="width: 240px; height: 240px;"></div>
+            <div class="bg-secondary bg-opacity-10 rounded-4 shadow-sm" style="width: 240px; height: 240px;"></div>
         </div>
-
-        <div class="mt-4">
-            <h2 class="display-6 fw-bold text-dark mb-5">Возможности платформы</h2>
-            <div class="d-flex flex-wrap justify-content-center gap-4">
-                <div class="feature-card"></div>
-                <div class="feature-card"></div>
-                <div class="feature-card"></div>
-                <div class="feature-card"></div>
-            </div>
-        </div>
-
-        {% endblock %}
-    </main>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+    </div>
+</div>
+{% endblock %}
