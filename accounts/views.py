@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.decorators import login_required
 
 
 def signup_view(request):
@@ -15,3 +16,9 @@ def signup_view(request):
     else:
         form = UserCreationForm()
     return render(request, 'accounts/signup.html', {'form': form})
+
+
+@login_required
+def profile_view(request):
+    """Представление для авторизации пользователя."""
+    return render(request, 'accounts/profile.html', {'username': request.user.username})
