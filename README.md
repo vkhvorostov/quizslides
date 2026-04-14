@@ -24,6 +24,13 @@
 ### Установка зависимостей
     pip install -r requirements.txt
 
+### Настройка переменных окружения
+Скопируй файл `.env.example` в `.env` и укажи в нём реальные параметры подключения к базе данных:
+
+    cp .env.example .env
+
+После этого открой `.env` и замени значения `DB_NAME`, `DB_USER`, `DB_PASSWORD`, `DB_HOST` и `DB_PORT` на свои.
+
 ### Запуск проекта
     python manage.py runserver
 
