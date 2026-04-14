@@ -2,6 +2,7 @@ asgiref==3.11.1
 Django==6.0.2
 django-bootstrap5==26.2
 legacy-cgi==2.6.4
+python-dotenv==1.0.1
 pillow==12.2.0
 psycopg==3.3.3
 psycopg-binary==3.3.3
