@@ -18,12 +18,17 @@
                 RU
             </div>
 
-            {% if user.is_authenticated %}
-                <span class="fw-semibold d-none d-sm-block text-dark">Привет, {{ user.username }}!</span>
-                <a href="{% url 'accounts:logout' %}" class="btn btn-outline-dark fw-semibold px-4 py-2">Выход</a>
-            {% else %}
-                <a href="{% url 'accounts:login' %}" class="btn btn-outline-dark fw-semibold px-4 py-2 d-none d-sm-block">Войти</a>
-                <a href="{% url 'accounts:signup' %}" class="btn btn-success fw-semibold px-4 py-2">Регистрация</a>
-            {% endif %}
+
+{% if user.is_authenticated %}
+    <span class="fw-semibold d-none d-sm-block text-dark">Привет, {{ user.username }}!</span>
+
+    <form method="post" action="{% url 'accounts:logout' %}" style="display: inline;">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-outline-dark fw-semibold px-4 py-2">Выход</button>
+    </form>
+{% else %}
+    <a href="{% url 'accounts:login' %}" class="btn btn-outline-dark fw-semibold px-4 py-2 d-none d-sm-block">Войти</a>
+    <a href="{% url 'accounts:signup' %}" class="btn btn-success fw-semibold px-4 py-2">Регистрация</a>
+{% endif %}
         </div>
     </header>
