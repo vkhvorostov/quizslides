@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block title %}Главная | QuizSlides{% endblock %}
+
+{% block content %}
+<div class="text-center d-flex flex-column justify-content-center flex-grow-1 py-5" style="background-image: radial-gradient(circle at 50% 50%, rgba(240, 249, 245, 0.5) 0%, rgba(255, 255, 255, 1) 100%);">
+
+    <div class="mb-5 pb-4">
+        <h1 class="display-5 fw-bold text-dark mb-5 mx-auto" style="max-width: 800px; line-height: 1.2;">
+            Универсальная платформа для лекций, семинаров и студенческих мероприятий
+        </h1>
+
+        <div class="d-flex flex-column flex-md-row justify-content-center align-items-center gap-3">
+            <span class="fs-4 fw-semibold text-dark">Вы участник?</span>
+
+            <form action="#" method="GET" class="d-flex flex-column flex-md-row gap-3">
+                <input type="text" name="code" class="form-control form-control-lg text-center border-0 bg-light shadow-none" placeholder="ВВЕДИТЕ КОД" style="width: 200px;" required>
+                <button type="submit" class="btn btn-success btn-lg fw-semibold px-4 py-3">Присоединиться</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <h2 class="display-6 fw-bold text-dark mb-5">Возможности платформы</h2>
+
+        <div class="d-flex flex-wrap justify-content-center gap-4">
+            <div class="bg-secondary bg-opacity-10 rounded-4 shadow-sm" style="width: 240px; height: 240px;"></div>
+            <div class="bg-secondary bg-opacity-10 rounded-4 shadow-sm" style="width: 240px; height: 240px;"></div>
+            <div class="bg-secondary bg-opacity-10 rounded-4 shadow-sm" style="width: 240px; height: 240px;"></div>
+            <div class="bg-secondary bg-opacity-10 rounded-4 shadow-sm" style="width: 240px; height: 240px;"></div>
+        </div>
+    </div>
+</div>
+{% endblock %}

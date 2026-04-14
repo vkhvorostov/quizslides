@@ -1,41 +1,37 @@
+{% load django_bootstrap5 %}
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}QuizSlides{% endblock %}</title>
+
+    {% bootstrap_css %}
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 </head>
-<body>
-    <nav>
-        <div class="container">
-            <h1>QuizSlides</h1>
-            <ul>
-                {% if user.is_authenticated %}
-                    <li><span style="color: #667eea;">Привет, {{ user.username }}!</span></li>
-                    <li><a href="{% url 'accounts:logout' %}">Выход</a></li>
-                {% else %}
-                    <li><a href="{% url 'accounts:login' %}">Вход</a></li>
-                    <li><a href="{% url 'accounts:signup' %}">Регистрация</a></li>
-                {% endif %}
-            </ul>
+<body class="d-flex flex-column min-vh-100" style="font-family: 'Inter', sans-serif;">
+
+    {% include 'includes/header.html' %}
+
+    {% if messages %}
+    <div class="container mt-2">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Закрыть"></button>
         </div>
-    </nav>
-    
-    <div class="container">
-        {% if messages %}
-        <div class="messages">
-            {% for message in messages %}
-            <div class="alert alert-{{ message.tags }}">
-                {{ message }}
-            </div>
-            {% endfor %}
-        </div>
-        {% endif %}
-        
-        <div class="content">
-            {% block content %}
-            {% endblock %}
-        </div>
+        {% endfor %}
     </div>
+    {% endif %}
+
+    <main class="flex-grow-1 d-flex flex-column">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    {% bootstrap_javascript %}
 </body>
 </html>
