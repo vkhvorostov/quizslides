@@ -1,4 +1,5 @@
 {% load django_bootstrap5 %}
+{% load static %}
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -33,5 +34,8 @@
     </main>
 
     {% bootstrap_javascript %}
+
+    <script src="{% static 'js/main.js' %}"></script>
+
 </body>
 </html>

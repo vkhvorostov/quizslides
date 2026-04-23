@@ -18,6 +18,14 @@
                 <button type="submit" class="btn btn-success btn-lg fw-semibold px-4 py-3">Присоединиться</button>
             </form>
         </div>
+
+        <div class="d-flex flex-column flex-md-row justify-content-center align-items-center gap-3  mt-4">
+            <span class="fs-4 fw-semibold text-dark">Вы организатор?</span>
+
+            {% if user.is_authenticated %}
+                <button type="button" onclick="openPopup()" id="openPopupBtn" class="btn btn-success btn-lg fw-semibold px-4 py-3">Создать презентацию</button>
+            {% endif %}
+        </div>
     </div>
 
     <div class="mt-4">
@@ -28,6 +36,58 @@
             <div class="bg-secondary bg-opacity-10 rounded-4 shadow-sm" style="width: 240px; height: 240px;"></div>
             <div class="bg-secondary bg-opacity-10 rounded-4 shadow-sm" style="width: 240px; height: 240px;"></div>
             <div class="bg-secondary bg-opacity-10 rounded-4 shadow-sm" style="width: 240px; height: 240px;"></div>
+        </div>
+    </div>
+</div>
+
+<div id="popupWindow" style="
+    display:none;
+    position:fixed;
+    top:0; left:0;
+    width:100%; height:100%;
+    background:rgba(0,0,0,0.5);
+    justify-content:center;
+    align-items:center;
+    z-index:9999;
+">
+    <div style="
+        background:white;
+        padding:25px;
+        border-radius:10px;
+        width:350px;
+    ">
+
+        <div style="display:flex; justify-content:flex-end;">
+            <button onclick="closePopup()" style="
+                border:none;
+                background:none;
+                color:#666;
+                font-size:24px;
+                cursor:pointer;
+                padding:0;
+                line-height:1;
+                margin-top:-10px;
+                margin-right:-5px;
+            ">
+                &times;
+            </button>
+        </div>
+
+        <h5 class="text-center mb-3">Создание презентации</h5>
+        
+        <form id="createPresentationForm" onsubmit="createPresentation(event)">
+            {% csrf_token %}
+            <div class="mb-3">
+                <input type="text" name="title" id="presentationTitle" class="form-control" placeholder="Название презентации" required>
+                <div class="invalid-feedback" id="titleError" style="display:none;"></div>
+            </div>
+            <div class="d-grid">
+                <button type="submit" class="btn btn-success">Создать</button>
+            </div>
+        </form>
+        
+        <div id="successMessage" style="display:none;" class="alert alert-success mt-3">
+            Презентация успешно создана!
         </div>
     </div>
 </div>

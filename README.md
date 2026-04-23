@@ -7,9 +7,14 @@
 #### 3. Добавили зависимости, необходимые для пустого проекта:
     asgiref==3.11.1
     Django==6.0.2
+    django-bootstrap5==26.2
     legacy-cgi==2.6.4
+    pillow==12.2.0
+    psycopg==3.3.3
+    psycopg-binary==3.3.3
     pytz==2025.2
     sqlparse==0.5.5
+    typing_extensions==4.15.0
     tzdata==2025.3
 
 ## Подготовка и запуск проекта
