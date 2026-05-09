@@ -3,43 +3,69 @@
 {% block title %}Регистрация - QuizSlides{% endblock %}
 
 {% block content %}
-<div class="form-container">
-    <h2>Регистрация</h2>
-    <form method="post">
-        {% csrf_token %}
-        
-        <div class="form-group">
-            {{ form.username.label_tag }}
-            {{ form.username }}
-            {% if form.username.help_text %}
-                <span class="helptext">{{ form.username.help_text }}</span>
-            {% endif %}
-            {{ form.username.errors }}
+<div class="text-center d-flex flex-column justify-content-center flex-grow-1 py-5" style="background-image: radial-gradient(circle at 50% 50%, rgba(240, 249, 245, 0.5) 0%, rgba(255, 255, 255, 1) 100%);">
+    <div class="container" style="max-width: 500px;">
+        <div style="
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        ">
+            <h2 class="display-6 fw-bold text-dark mb-4 text-center">Регистрация</h2>
+
+            <form method="post">
+                {% csrf_token %}
+
+                <div class="mb-4 text-start">
+                    <label class="form-label fw-semibold text-dark">{{ form.username.label }}</label>
+                    {{ form.username }}
+                    {% if form.username.help_text %}
+                        <div class="helptext text-muted small mt-1">{{ form.username.help_text }}</div>
+                    {% endif %}
+                    {% if form.username.errors %}
+                        <div class="text-danger small mt-1">
+                            {{ form.username.errors }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-4 text-start">
+                    <label class="form-label fw-semibold text-dark">{{ form.password1.label }}</label>
+                    {{ form.password1 }}
+                    {% if form.password1.help_text %}
+                        <div class="helptext text-muted small mt-1">{{ form.password1.help_text }}</div>
+                    {% endif %}
+                    {% if form.password1.errors %}
+                        <div class="text-danger small mt-1">
+                            {{ form.password1.errors }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-4 text-start">
+                    <label class="form-label fw-semibold text-dark">{{ form.password2.label }}</label>
+                    {{ form.password2 }}
+                    {% if form.password2.help_text %}
+                        <div class="helptext text-muted small mt-1">{{ form.password2.help_text }}</div>
+                    {% endif %}
+                    {% if form.password2.errors %}
+                        <div class="text-danger small mt-1">
+                            {{ form.password2.errors }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="d-grid gap-3">
+                    <button type="submit" class="btn btn-success btn-lg fw-semibold px-4 py-3" style="background-color: #198754; border: none;">
+                        Зарегистрироваться
+                    </button>
+                </div>
+            </form>
+
+            <p class="mt-4 text-center text-muted">
+                Уже есть аккаунт? <a href="{% url 'accounts:login' %}" class="text-decoration-none fw-semibold" style="color: #198754;">Войти</a>
+            </p>
         </div>
-        
-        <div class="form-group">
-            {{ form.password1.label_tag }}
-            {{ form.password1 }}
-            {% if form.password1.help_text %}
-                <span class="helptext">{{ form.password1.help_text }}</span>
-            {% endif %}
-            {{ form.password1.errors }}
-        </div>
-        
-        <div class="form-group">
-            {{ form.password2.label_tag }}
-            {{ form.password2 }}
-            {% if form.password2.help_text %}
-                <span class="helptext">{{ form.password2.help_text }}</span>
-            {% endif %}
-            {{ form.password2.errors }}
-        </div>
-        
-        <button type="submit">Зарегистрироваться</button>
-    </form>
-    
-    <p class="login-link">
-        Уже есть аккаунт? <a href="{% url 'accounts:login' %}">Войти</a>
-    </p>
+    </div>
 </div>
 {% endblock %}
