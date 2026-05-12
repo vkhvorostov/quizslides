@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- CSRF токен для JS запросов -->
+<input type="hidden" id="csrf-token" value="{{ csrf_token }}">
+<input type="hidden" id="presentation-id" value="{{ presentation.id_presentation }}">
+
+<div class="d-flex flex-column vh-100">
+    <!-- Шапка (Header) -->
+    <header class="bg-white border-bottom py-2 px-4 d-flex justify-content-between align-items-center">
+        <div class="d-flex align-items-center gap-3">
+            <a href="{% url 'index' %}" class="btn btn-outline-secondary btn-sm">&larr; Назад</a>
+            <!-- Инлайновое редактирование названия -->
+            <h4 class="mb-0 text-truncate" 
+                id="presentation-title" 
+                contenteditable="true" 
+                style="cursor: text; max-width: 400px; outline: none; padding: 2px 5px; border-radius: 4px;">
+                {{ presentation.name }}
+            </h4>
+            <small id="save-status" class="text-muted" style="display: none;">Сохранено</small>
+        </div>
+        <button class="btn btn-success btn-sm">Презентация</button>
+    </header>
+
+    <!-- Основная часть -->
+    <div class="d-flex flex-grow-1 overflow-hidden">
+        
+        <!-- Боковая панель (Sidebar) -->
+        <aside class="bg-light border-end d-flex flex-column" style="width: 250px;">
+            <div class="p-3 border-bottom">
+                <div class="dropdown">
+                    <button class="btn btn-primary w-100 dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        + Добавить слайд
+                    </button>
+                    <ul class="dropdown-menu w-100">
+                        <li><a class="dropdown-item" href="#" onclick="addSlide('TEXT', event)">Текст</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="addSlide('POLL', event)">Опрос</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="addSlide('IMAGE', event)">Изображение</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="flex-grow-1 overflow-auto p-3" id="slides-list">
+                {% for slide in slides %}
+                <div class="card mb-3 slide-thumbnail border-success" 
+                    data-slide-id="{{ slide.id_slide }}" 
+                    onclick="selectSlide('{{ slide.id_slide }}')"
+                    style="cursor: pointer; transition: transform 0.2s;">
+                    <div class="card-body p-2">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span class="badge bg-secondary"># {{ slide.number }}</span>
+                            {% if slide.status %}<span class="text-success" style="font-size: 10px;">● Active</span>{% endif %}
+                        </div>
+                        <div class="preview-placeholder bg-light border rounded d-flex align-items-center justify-content-center" style="height: 80px;">
+                            {% if slide.picture %}
+                                <img src="{{ slide.picture.url }}" class="img-fluid h-100" style="object-fit: cover;">
+                            {% else %}
+                                <i class="bi bi-image text-muted"></i> 
+                                <small class="text-muted ms-1">Пустой слайд</small>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div id="no-slides-msg" class="text-center py-5 text-muted">
+                    <p>Слайдов пока нет</p>
+                </div>
+                {% endfor %}
+            </div>
+        </aside>
+
+        <!-- Рабочая область (Canvas) -->
+        <main class="flex-grow-1 bg-secondary bg-opacity-10 p-4 d-flex justify-content-center align-items-center">
+            <div class="bg-white shadow-sm border rounded" style="width: 800px; height: 450px;">
+                <!-- Сюда будет рендериться контент выбранного слайда -->
+                <h3 class="text-center mt-5 text-muted">Выберите или создайте слайд</h3>
+            </div>
+        </main>
+    </div>
+</div>
+
+<script src="{% static 'js/editor.js' %}"></script>
+{% endblock %}
