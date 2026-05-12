@@ -3,7 +3,8 @@
 {% block title %}Главная | QuizSlides{% endblock %}
 
 {% block content %}
-<div class="text-center d-flex flex-column justify-content-center flex-grow-1 py-5" style="background-image: radial-gradient(circle at 50% 50%, rgba(240, 249, 245, 0.5) 0%, rgba(255, 255, 255, 1) 100%);">
+<div class="text-center d-flex flex-column justify-content-center flex-grow-1 py-5"
+     style="background-image: radial-gradient(circle at 50% 50%, rgba(240, 249, 245, 0.5) 0%, rgba(255, 255, 255, 1) 100%);">
 
     <div class="mb-5 pb-4">
         <h1 class="display-5 fw-bold text-dark mb-5 mx-auto" style="max-width: 800px; line-height: 1.2;">
@@ -14,27 +15,58 @@
             <span class="fs-4 fw-semibold text-dark">Вы участник?</span>
 
             <form action="#" method="GET" class="d-flex flex-column flex-md-row gap-3">
-                <input type="text" name="code" class="form-control form-control-lg text-center border-0 bg-light shadow-none" placeholder="ВВЕДИТЕ КОД" style="width: 200px;" required>
+                <input type="text" name="code"
+                       class="form-control form-control-lg text-center border-0 bg-light shadow-none"
+                       placeholder="ВВЕДИТЕ КОД" style="width: 200px;" required>
                 <button type="submit" class="btn btn-success btn-lg fw-semibold px-4 py-3">Присоединиться</button>
             </form>
         </div>
 
         {% if user.is_authenticated %}
-            <div class="d-flex flex-column flex-md-row justify-content-center align-items-center gap-3  mt-4">
-                <span class="fs-4 fw-semibold text-dark">Вы организатор?</span>
-                <button type="button" onclick="openPopup()" id="openPopupBtn" class="btn btn-success btn-lg fw-semibold px-4 py-3">Создать презентацию</button>               
-            </div>
+        <div class="d-flex flex-column flex-md-row justify-content-center align-items-center gap-3  mt-4">
+            <span class="fs-4 fw-semibold text-dark">Вы организатор?</span>
+            <button type="button" onclick="openPopup()" id="openPopupBtn"
+                    class="btn btn-success btn-lg fw-semibold px-4 py-3">Создать презентацию
+            </button>
+        </div>
         {% endif %}
     </div>
 
     <div class="mt-4">
         <h2 class="display-6 fw-bold text-dark mb-5">Возможности платформы</h2>
-
         <div class="d-flex flex-wrap justify-content-center gap-4">
-            <div class="bg-secondary bg-opacity-10 rounded-4 shadow-sm" style="width: 240px; height: 240px;"></div>
-            <div class="bg-secondary bg-opacity-10 rounded-4 shadow-sm" style="width: 240px; height: 240px;"></div>
-            <div class="bg-secondary bg-opacity-10 rounded-4 shadow-sm" style="width: 240px; height: 240px;"></div>
-            <div class="bg-secondary bg-opacity-10 rounded-4 shadow-sm" style="width: 240px; height: 240px;"></div>
+            <div class="text-center" style="width: 240px;">
+                <div class="rounded-4 shadow-sm overflow-hidden mb-2" style="height: 240px;">
+                    <img src="/static/drawable/create_content_on_slide.png" alt="Создание контента на слайде"
+                         style="width: 100%; height: 100%; object-fit: cover;" draggable="false">
+                </div>
+                <p class="fw-semibold text-secondary">Добавление контента на слайд</p>
+            </div>
+
+            <div class="text-center" style="width: 240px;">
+                <div class="rounded-4 shadow-sm overflow-hidden mb-2" style="height: 240px;">
+                    <img src="/static/drawable/create_new_presentation.png" alt="Создание презентации"
+                         style="width: 100%; height: 100%; object-fit: cover;" draggable="false">
+                </div>
+                <p class="fw-semibold text-secondary">Создание презентации</p>
+            </div>
+
+            <div class="text-center" style="width: 240px;">
+                <div class="rounded-4 shadow-sm overflow-hidden mb-2" style="height: 240px;">
+                    <img src="/static/drawable/edit_presentation.png" alt="Редактирование презентации"
+                         style="width: 100%; height: 100%; object-fit: cover;" draggable="false">
+                </div>
+                <p class="fw-semibold text-secondary">Редактирование презентации</p>
+            </div>
+
+            <div class="text-center" style="width: 240px;">
+                <div class="rounded-4 shadow-sm overflow-hidden mb-2" style="height: 240px;">
+                    <img src="/static/drawable/ai_slide_generator.png" alt="AI генерация слайдов"
+                         style="width: 100%; height: 100%; object-fit: cover;" draggable="false">
+                </div>
+                <p class="fw-semibold text-secondary">AI генерация слайдов (Скоро)</p>
+            </div>
+
         </div>
     </div>
 </div>
@@ -73,18 +105,19 @@
         </div>
 
         <h5 class="text-center mb-3">Создание презентации</h5>
-        
+
         <form id="createPresentationForm" onsubmit="createPresentation(event)">
             {% csrf_token %}
             <div class="mb-3">
-                <input type="text" name="title" id="presentationTitle" class="form-control" placeholder="Название презентации" required>
+                <input type="text" name="title" id="presentationTitle" class="form-control"
+                       placeholder="Название презентации" required>
                 <div class="invalid-feedback" id="titleError" style="display:none;"></div>
             </div>
             <div class="d-grid">
                 <button type="submit" class="btn btn-success">Создать</button>
             </div>
         </form>
-        
+
         <div id="successMessage" style="display:none;" class="alert alert-success mt-3">
             Презентация успешно создана!
         </div>
