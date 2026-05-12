@@ -73,24 +73,15 @@ function createPresentation(event) {
     .then(data => {
         if (data.success) {
             successDiv.style.display = 'block';
-            successDiv.textContent = `Презентация "${data.name}" успешно создана!`;
+            successDiv.textContent = `Презентация "${data.name}" успешно создана! Перенаправление...`;
             document.getElementById('createPresentationForm').reset();
             
-            newTab.document.title = data.name;
-            newTab.document.body.innerHTML = `
-                <div style="display: flex; justify-content: center; align-items: center; height: 100vh; font-family: 'Inter', sans-serif;">
-                    <div style="text-align: center;">
-                        <h1 style="color: #198754; font-size: 2rem;">${data.name}</h1>
-                        <p style="color: #666; font-size: 1.2rem;">Презентация создана. Редактирование будет доступно позже.</p>
-                        <p style="color: #999;">ID: ${data.id}</p>
-                    </div>
-                </div>
-            `;
+            newTab.location.href = `/editor/${data.id}/`;
             
             setTimeout(() => {
                 closePopup();
                 successDiv.style.display = 'none';
-            }, 2000);
+            }, 1000);
         } else {
             newTab.close();
             errorDiv.textContent = data.error || 'Ошибка при создании';
