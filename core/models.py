@@ -53,12 +53,34 @@ class Presentation(models.Model):
 
 class Slide(models.Model):
     """Слайд"""
+
     id_slide = models.AutoField(primary_key=True)
+
     number = models.IntegerField()
-    picture = models.ImageField(upload_to='slides/', null=True, blank=True)
+
+    picture = models.ImageField(
+        upload_to='slides/',
+        null=True,
+        blank=True
+    )
+
     status = models.BooleanField(default=False)
-    id_presentation = models.ForeignKey(Presentation, on_delete=models.CASCADE,
-                                        related_name='slides')
+
+    slide_type = models.CharField(
+        max_length=20,
+        default='CONTENT'
+    )
+
+    content = models.TextField(
+        blank=True,
+        default=''
+    )
+
+    id_presentation = models.ForeignKey(
+        Presentation,
+        on_delete=models.CASCADE,
+        related_name='slides'
+    )
 
 
 class Widget(models.Model):
