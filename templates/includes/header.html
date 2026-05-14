@@ -1,34 +1,50 @@
-<header class="container-fluid d-flex justify-content-between align-items-center py-4 px-md-5">
-        <a href="/" class="d-flex align-items-center gap-2 fs-4 fw-bold text-decoration-none text-dark">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="10"></circle>
-                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
-                <line x1="12" y1="17" x2="12.01" y2="17"></line>
-            </svg>
-            QuizSlides
-        </a>
+{% load i18n %}
+{% get_current_language as CURRENT_LANGUAGE %}
 
-        <div class="d-flex align-items-center gap-3">
-            <div class="d-flex align-items-center gap-1 text-secondary me-2">
+<header class="container-fluid d-flex justify-content-between align-items-center py-4 px-md-5">
+    <a href="/" class="d-flex align-items-center gap-2 fs-4 fw-bold text-decoration-none text-dark">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+        </svg>
+        QuizSlides
+    </a>
+
+    <div class="d-flex align-items-center gap-3">
+        <form action="{% url 'set_language' %}" method="post" class="m-0">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.path }}">
+
+            <button type="submit" name="language" value="{% if CURRENT_LANGUAGE == 'ru' %}en{% else %}ru{% endif %}"
+                    class="btn btn-link d-flex align-items-center gap-1 text-secondary me-2 text-decoration-none p-0 border-0 bg-transparent shadow-none">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="12" r="10"></circle>
                     <line x1="2" y1="12" x2="22" y2="12"></line>
                     <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
                 </svg>
-                RU
-            </div>
+                <span class="fw-bold">{% if CURRENT_LANGUAGE == 'ru' %}EN{% else %}RU{% endif %}</span>
+            </button>
+        </form>
 
+        {% if user.is_authenticated %}
+            <span class="fw-semibold d-none d-sm-block text-dark">
+                {% trans "Привет" %}, {{ user.username }}!
+            </span>
 
-{% if user.is_authenticated %}
-    <span class="fw-semibold d-none d-sm-block text-dark">Привет, {{ user.username }}!</span>
-
-    <form method="post" action="{% url 'accounts:logout' %}" style="display: inline;">
-        {% csrf_token %}
-        <button type="submit" class="btn btn-outline-dark fw-semibold px-4 py-2">Выход</button>
-    </form>
-{% else %}
-    <a href="{% url 'accounts:login' %}" class="btn btn-outline-dark fw-semibold px-4 py-2 d-none d-sm-block">Войти</a>
-    <a href="{% url 'accounts:signup' %}" class="btn btn-success fw-semibold px-4 py-2">Регистрация</a>
-{% endif %}
-        </div>
-    </header>
+            <form method="post" action="{% url 'accounts:logout' %}" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline-dark fw-semibold px-4 py-2">
+                    {% trans "Выход" %}
+                </button>
+            </form>
+        {% else %}
+            <a href="{% url 'accounts:login' %}" class="btn btn-outline-dark fw-semibold px-4 py-2 d-none d-sm-block">
+                {% trans "Войти" %}
+            </a>
+            <a href="{% url 'accounts:signup' %}" class="btn btn-success fw-semibold px-4 py-2">
+                {% trans "Регистрация" %}
+            </a>
+        {% endif %}
+    </div>
+</header>
