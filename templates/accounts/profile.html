@@ -1,15 +1,17 @@
+{% load i18n %}
 <!DOCTYPE html>
-<html lang="en">
+{% get_current_language as LANGUAGE_CODE %}
+<html lang="{{ LANGUAGE_CODE }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Successful</title>
+    <title>{% trans "Вход выполнен" %}</title>
 </head>
 <body>
-    <p>You logged in as {{ username }}</p>
+    <p>{% blocktrans %}Вы вошли как {{ username }}{% endblocktrans %}</p>
     <form action="{% url 'accounts:logout' %}" method="post">
         {% csrf_token %}
-        <button type="submit">Exit</button>
+        <button type="submit">{% trans "Выход" %}</button>
     </form>
 </body>
 </html>
