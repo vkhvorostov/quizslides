@@ -206,15 +206,274 @@ function addSlide(type, event) {
 }
 
 function selectSlide(id) {
-    console.log("Выбран слайд:", id);
 
     document.querySelectorAll('.slide-thumbnail').forEach(el => {
         el.classList.remove('border-primary', 'shadow-sm');
         el.classList.add('border-success');
     });
+
     const active = document.querySelector(`[data-slide-id="${id}"]`);
-    if(active) {
+
+    if (active) {
         active.classList.remove('border-success');
         active.classList.add('border-primary', 'shadow-sm');
     }
+
+    const editor = document.getElementById('slide-editor');
+
+    editor.innerHTML = `
+        <div class="text-center mt-5">
+            Загрузка...
+        </div>
+    `;
+
+    fetch(`/api/slide/${id}/`)
+    .then(response => response.json())
+    .then(data => {
+
+if (data.slide_type === 'POLL') {
+    renderPollPreview(id, data);
+}
+else {
+    renderContentPreview(id, data);
+}
+    });
+}
+
+function renderContentPreview(id, data) {
+
+    const editor = document.getElementById('slide-editor');
+
+    editor.innerHTML = `
+        <div class="h-100 d-flex flex-column">
+
+            ${
+                data.picture_url
+                ?
+                `
+                <div class="text-center mb-4">
+                    <img src="${data.picture_url}"
+                         class="img-fluid rounded border"
+                         style="max-height:250px;">
+                </div>
+                `
+                :
+                ''
+            }
+
+            <div class="border rounded p-3 bg-light flex-grow-1">
+                ${data.content || 'Нет текста'}
+            </div>
+
+            <div class="mt-4">
+                <button
+                    class="btn btn-primary"
+                    onclick="openEditMode(${id})">
+
+                    Редактировать
+                </button>
+            </div>
+
+        </div>
+    `;
+}
+
+function renderPollPreview(id, data) {
+
+    const editor = document.getElementById('slide-editor');
+
+    editor.innerHTML = `
+        <div class="h-100 d-flex flex-column justify-content-center">
+
+            <h3 class="mb-4">
+                ${data.content || 'Новый опрос'}
+            </h3>
+
+            <div class="d-grid gap-2">
+
+                <button class="btn btn-outline-primary">
+                    Вариант 1
+                </button>
+
+                <button class="btn btn-outline-primary">
+                    Вариант 2
+                </button>
+
+            </div>
+
+            <div class="mt-4">
+                <button
+                    class="btn btn-primary"
+                    onclick="openPollEditMode(${id})">
+
+                    Редактировать опрос
+                </button>
+            </div>
+
+        </div>
+    `;
+}
+
+function openPollEditMode(id) {
+
+    const editor = document.getElementById('slide-editor');
+
+    fetch(`/api/slide/${id}/`)
+    .then(response => response.json())
+    .then(data => {
+
+        editor.innerHTML = `
+            <div class="mb-3">
+
+                <label class="form-label">
+                    Вопрос
+                </label>
+
+                <textarea
+                    id="slide-content"
+                    class="form-control"
+                    rows="3">${data.content || ''}</textarea>
+
+            </div>
+
+            <button
+                class="btn btn-success"
+                onclick="saveSlideContent(${id})">
+
+                Сохранить
+            </button>
+        `;
+    });
+}
+
+function openEditMode(id) {
+
+    const editor = document.getElementById('slide-editor');
+
+    fetch(`/api/slide/${id}/`)
+    .then(response => response.json())
+    .then(data => {
+
+        editor.innerHTML = `
+            <div class="mb-3">
+
+                <label class="form-label">Текст</label>
+
+                <textarea
+                    id="slide-content"
+                    class="form-control"
+                    rows="6">${data.content || ''}</textarea>
+
+            </div>
+
+            <div class="mb-3">
+
+                <label class="form-label">Картинка</label>
+
+                <input
+                    type="file"
+                    id="slide-picture"
+                    class="form-control">
+
+            </div>
+
+            ${
+                data.picture_url
+                ?
+                `
+                <img src="${data.picture_url}"
+                     class="img-fluid rounded border mb-3"
+                     style="max-height:200px;">
+                `
+                :
+                ''
+            }
+
+            <button
+                class="btn btn-success"
+                onclick="saveSlideContent(${id})">
+
+                Сохранить
+            </button>
+
+            <button
+                class="btn btn-secondary ms-2"
+                onclick="selectSlide(${id})">
+
+                Отмена
+            </button>
+
+            <div id="slide-save-status"
+                 class="mt-3 text-muted"></div>
+        `;
+    });
+}
+
+function saveSlideContent(slideId) {
+
+    const csrfToken = document.getElementById('csrf-token').value;
+
+    const content = document.getElementById('slide-content').value;
+
+    const pictureInput = document.getElementById('slide-picture');
+
+    const formData = new FormData();
+
+    formData.append('content', content);
+
+    if (pictureInput.files.length > 0) {
+        formData.append('picture', pictureInput.files[0]);
+    }
+
+    fetch(`/api/slide/${slideId}/update-content/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': csrfToken
+        },
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+
+        const status = document.getElementById('slide-save-status');
+
+        if (data.success) {
+            status.innerText = 'Сохранено';
+            const slideElement = document.querySelector(
+    `[data-slide-id="${slideId}"] .preview-placeholder`);
+    if (slideElement) {
+    if (data.picture_url) {
+
+        slideElement.innerHTML = `
+            <img src="${data.picture_url}"
+                 class="img-fluid w-100 h-100 rounded"
+                 style="object-fit: cover;">
+        `;
+    }
+    else {
+
+        slideElement.innerHTML = `
+            <small class="text-muted d-block"
+                   style="
+                        overflow: hidden;
+                        display: -webkit-box;
+                        -webkit-line-clamp: 3;
+                        -webkit-box-orient: vertical;
+                   ">
+                ${content}
+            </small>
+        `;
+    }
+}
+    setTimeout(() => {
+        selectSlide(slideId);
+    }, 300);
+        }
+        else {
+            status.innerText = 'Ошибка';
+        }
+    })
+    .catch(() => {
+        document.getElementById('slide-save-status').innerText = 'Ошибка';
+    });
 }

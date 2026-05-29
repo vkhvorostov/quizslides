@@ -65,9 +65,8 @@
                         + {% trans "Добавить слайд" %}
                     </button>
                     <ul class="dropdown-menu w-100">
-                        <li><a class="dropdown-item" href="#" onclick="addSlide('TEXT', event)">{% trans "Текст" %}</a></li>
-                        <li><a class="dropdown-item" href="#" onclick="addSlide('POLL', event)">{% trans "Опрос" %}</a></li>
-                        <li><a class="dropdown-item" href="#" onclick="addSlide('IMAGE', event)">{% trans "Изображение" %}</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="addSlide('CONTENT', event)">Контент</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="addSlide('POLL', event)">Опрос</a></li>
                     </ul>
                 </div>
             </div>
@@ -84,12 +83,19 @@
                             <span class="badge bg-secondary"># {{ slide.number }}</span>
                             {% if slide.status %}<span class="text-success" style="font-size: 10px;">● {% trans "Active" %}</span>{% endif %}
                         </div>
-                        <div class="preview-placeholder bg-light border rounded d-flex align-items-center justify-content-center" style="height: 80px;">
+                        <div class="preview-placeholder bg-light border rounded p-2 overflow-hidden" style="height: 80px;">
                             {% if slide.picture %}
-                                <img src="{{ slide.picture.url }}" class="img-fluid h-100" style="object-fit: cover;">
+                            <img src="{{ slide.picture.url }}" class="img-fluid w-100 h-100 rounded" style="object-fit: cover;">
+                            {% elif slide.content %}
+                            <small class="text-muted d-block" style="overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;">
+                                {{ slide.content }}
+                            </small>
                             {% else %}
-                                <i class="bi bi-image text-muted"></i> 
-                                <small class="text-muted ms-1">{% trans "Пустой слайд" %}</small>
+                            <div class="h-100 d-flex align-items-center justify-content-center">
+                                <small class="text-muted">
+                                    Пустой слайд
+                                </small>
+                            </div>
                             {% endif %}
                         </div>
                     </div>
@@ -104,9 +110,8 @@
 
         <!-- Рабочая область (Canvas) -->
         <main class="flex-grow-1 bg-secondary bg-opacity-10 p-4 d-flex justify-content-center align-items-center">
-            <div class="bg-white shadow-sm border rounded" style="width: 800px; height: 450px;">
-                <!-- Сюда будет рендериться контент выбранного слайда -->
-                <h3 class="text-center mt-5 text-muted">{% trans "Выберите или создайте слайд" %}</h3>
+            <div id="slide-editor" class="bg-white shadow-sm border rounded p-4" style="width: 800px; height: 450px; overflow:auto;">
+                <h3 class="text-center mt-5 text-muted">Выберите или создайте слайд</h3>
             </div>
         </main>
     </div>
