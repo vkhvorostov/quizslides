@@ -6,6 +6,37 @@
 <input type="hidden" id="csrf-token" value="{{ csrf_token }}">
 <input type="hidden" id="presentation-id" value="{{ presentation.id_presentation }}">
 
+<style>
+    .slide-thumbnail {
+        cursor: grab;
+        user-select: none;
+        transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+    }
+
+    .slide-thumbnail:active {
+        cursor: grabbing;
+    }
+
+    /* Класс, который будет добавляться к элементу во время его перетаскивания */
+    .slide-thumbnail.dragging {
+        opacity: 0.4;
+        border: 2px dashed #0d6efd !important; /* Синий пунктир (Bootstrap primary) */
+        transform: scale(0.95);
+        transition: none;
+    }
+
+    #slides-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .slide-thumbnail:hover {
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        transform: translateY(-2px);
+    }
+</style>
+
 <div class="d-flex flex-column vh-100">
     <!-- Шапка (Header) -->
     <header class="bg-white border-bottom py-2 px-4 d-flex justify-content-between align-items-center">
@@ -44,9 +75,10 @@
             <div class="flex-grow-1 overflow-auto p-3" id="slides-list">
                 {% for slide in slides %}
                 <div class="card mb-3 slide-thumbnail border-success" 
+                    draggable="true"
                     data-slide-id="{{ slide.id_slide }}" 
                     onclick="selectSlide('{{ slide.id_slide }}')"
-                    style="cursor: pointer; transition: transform 0.2s;">
+                    style="cursor: grab; transition: transform 0.2s;">
                     <div class="card-body p-2">
                         <div class="d-flex justify-content-between mb-1">
                             <span class="badge bg-secondary"># {{ slide.number }}</span>

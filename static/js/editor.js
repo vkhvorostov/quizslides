@@ -55,10 +55,90 @@ document.addEventListener('DOMContentLoaded', function() {
     titleElement.addEventListener('blur', function() {
         this.style.backgroundColor = 'transparent';
     });
+
+
+    const slidesList = document.getElementById('slides-list');
+    let draggedItem = null;
+
+    // Начало перетаскивания
+    slidesList.addEventListener('dragstart', function(e) {
+        const target = e.target.closest('.slide-thumbnail');
+        if (target) {
+            draggedItem = target;
+
+            document.body.classList.add('dragging-active');
+            // Добавляем класс для синего пунктира и прозрачности
+            setTimeout(() => target.classList.add('dragging'), 0);
+            
+            e.dataTransfer.effectAllowed = 'move';
+        }
+    });
+
+    // Конец перетаскивания
+    slidesList.addEventListener('dragend', function(e) {
+        document.body.classList.remove('dragging-active');
+        if (draggedItem) {
+            draggedItem.classList.remove('dragging');
+            draggedItem = null;
+        }
+    });
+
+    // Движение над другими элементами
+    slidesList.addEventListener('dragover', function(e) {
+        e.preventDefault();
+
+        e.dataTransfer.dropEffect = 'move';
+        const target = e.target.closest('.slide-thumbnail');
+        if (target && target !== draggedItem) {
+            
+            const rect = target.getBoundingClientRect();
+            const next = (e.clientY - rect.top) / (rect.bottom - rect.top) > 0.5;
+            slidesList.insertBefore(draggedItem, next && target.nextSibling || target);
+        }
+    });
+
+    // Элемент отпущен
+    slidesList.addEventListener('drop', function(e) {
+        e.preventDefault();
+        updateOrderAndSave();
+    });
+
+    // Функция обновления номеров на фронте и отправки на бэк
+    function updateOrderAndSave() {
+        const slides = document.querySelectorAll('.slide-thumbnail');
+        const slideIds = [];
+        
+        slides.forEach((slide, index) => {
+            // Мгновенно обновляем номер в интерфейсе
+            const numberBadge = slide.querySelector('.badge');
+            if (numberBadge) {
+                numberBadge.innerText = `# ${index + 1}`;
+            }
+            slideIds.push(slide.getAttribute('data-slide-id'));
+        });
+
+        // Отправляем новый порядок на сервер
+        fetch(`/api/presentation/${presentationId}/reorder-slides/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify({ slide_ids: slideIds })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (!data.success) {
+                console.error('Ошибка при сохранении порядка на сервере');
+            }
+        })
+        .catch(err => console.error("Ошибка сети:", err));
+    }
+
 });
 
 function addSlide(type, event) {
-    // Предотвращаем стандартное поведение (переход по ссылке #)
+    
     if (event) event.preventDefault();
 
     const csrfToken = document.getElementById('csrf-token').value;
@@ -88,9 +168,10 @@ function addSlide(type, event) {
 
             const slideHtml = `
                 <div class="card mb-3 slide-thumbnail border-success" 
+                     draggable="true"
                      data-slide-id="${data.id_slide}" 
                      onclick="selectSlide('${data.id_slide}')"
-                     style="cursor: pointer; opacity: 0; transform: translateY(10px); transition: all 0.3s;">
+                     style="cursor: grab; opacity: 0; transform: translateY(10px); transition: all 0.3s;">
                     <div class="card-body p-2">
                         <div class="d-flex justify-content-between mb-1">
                             <span class="badge bg-secondary"># ${data.number}</span>
