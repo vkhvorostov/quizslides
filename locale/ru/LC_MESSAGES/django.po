@@ -1,0 +1,227 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: QuizSlides\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-05-30 18:33+0700\n"
+"PO-Revision-Date: \n"
+"Last-Translator: Anton"
+"Language-Team: \n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);\n"
+
+#: quizslides/settings.py:133
+msgid "English"
+msgstr "Английский"
+
+#: quizslides/settings.py:134
+msgid "Russian"
+msgstr "Русский"
+
+#: templates/accounts/login.html:4
+#: templates/accounts/login.html:11
+#: templates/accounts/login.html:45
+#: templates/accounts/signup.html:68
+#: templates/includes/header.html:43
+msgid "Login"
+msgstr "Вход"
+
+#: templates/accounts/login.html:12
+msgid "Welcome back to QuizSlides"
+msgstr "Добро пожаловать обратно в QuizSlides"
+
+#: templates/accounts/login.html:51
+msgid "Don't have an account?"
+msgstr "Нет аккаунта?"
+
+#: templates/accounts/login.html:52
+#: templates/accounts/signup.html:5
+#: templates/accounts/signup.html:16
+#: templates/accounts/signup.html:62
+#: templates/includes/header.html:46
+msgid "Sign Up"
+msgstr "Зарегистрироваться"
+
+#: templates/accounts/profile.html:8
+msgid "Login Successful"
+msgstr "Вход выполнен"
+
+#: templates/accounts/profile.html:11
+msgid "You are logged in as %(username)s"
+msgstr "Вы вошли как %(username)s"
+
+#: templates/accounts/profile.html:14
+#: templates/includes/header.html:38
+msgid "Logout"
+msgstr "Выход"
+
+#: templates/accounts/signup.html:68
+msgid "Already have an account?"
+msgstr "Уже есть аккаунт?"
+
+#: templates/base.html:27
+msgid "Close"
+msgstr "Закрыть"
+
+#: templates/core/editor.html:44
+msgid "Back"
+msgstr "Назад"
+
+#: templates/core/editor.html:52
+msgid "Saved"
+msgstr "Сохранено"
+
+#: templates/core/editor.html:54
+msgid "Presentation"
+msgstr "Презентация"
+
+#: templates/core/editor.html:65
+msgid "Add Slide"
+msgstr "Добавить слайд"
+
+#: templates/core/editor.html:84
+msgid "Active"
+msgstr "Активный"
+
+#: templates/core/editor.html:96
+msgid "Empty slide"
+msgstr "Пустой слайд"
+
+#: templates/core/editor.html:105
+msgid "No slides yet"
+msgstr "Слайдов пока нет"
+
+#: templates/core/editor.html:114
+msgid "Select or create a slide"
+msgstr "Выберите или создайте слайд"
+
+#: templates/includes/header.html:32
+msgid "Hello"
+msgstr "Привет"
+
+#: templates/index.html:13
+msgid "Universal platform for lectures, seminars and student events"
+msgstr "Универсальная платформа для лекций, семинаров и студенческих мероприятий"
+
+#: templates/index.html:17
+msgid "Are you a participant?"
+msgstr "Вы участник?"
+
+#: templates/index.html:22
+msgid "ENTER CODE"
+msgstr "ВВЕДИТЕ КОД"
+
+#: templates/index.html:24
+msgid "Join"
+msgstr "Присоединиться"
+
+#: templates/index.html:31
+msgid "Are you an organizer?"
+msgstr "Вы организатор?"
+
+#: templates/index.html:34
+msgid "Create presentation"
+msgstr "Создать презентацию"
+
+#: templates/index.html:41
+msgid "Platform features"
+msgstr "Возможности платформы"
+
+#: templates/index.html:47
+#: templates/index.html:50
+msgid "Adding content to a slide"
+msgstr "Добавление контента на слайд"
+
+#: templates/index.html:56
+#: templates/index.html:59
+#: templates/index.html:117
+msgid "Presentation creation"
+msgstr "Создание презентации"
+
+#: templates/index.html:65
+#: templates/index.html:68
+msgid "Presentation editing"
+msgstr "Редактирование презентации"
+
+#: templates/index.html:74
+msgid "AI slide generation"
+msgstr "AI генерация слайдов"
+
+#: templates/index.html:77
+msgid "AI slide generation (Soon)"
+msgstr "AI генерация слайдов (Скоро)"
+
+#: templates/index.html:123
+msgid "Presentation title"
+msgstr "Название презентации"
+
+#: templates/index.html:127
+msgid "Create"
+msgstr "Создать"
+
+#: templates/index.html:132
+msgid "Presentation created successfully!"
+msgstr "Презентация успешно создана!"
+
+#: web/guest.html:6
+msgid "Interactive Poll · View"
+msgstr "Интерактивный опрос · Просмотр"
+
+#: web/guest.html:97
+msgid "Question"
+msgstr "Вопрос"
+
+#: web/guest.html:101
+msgid "Option 1"
+msgstr "Вариант 1"
+
+#: web/guest.html:105
+msgid "Option 2"
+msgstr "Вариант 2"
+
+#: accounts/views.py:14
+msgid "Account %(username)s has been successfully created! Please log in."
+msgstr "Аккаунт %(username)s успешно создан! Теперь войдите в систему."
+
+#: web/creator.html:105
+
+msgid "Slide 1"
+msgstr "Слайд 1"
+
+msgid "Slide 2"
+msgstr "Слайд 2"
+
+msgid "Slide 3"
+msgstr "Слайд 3"
+
+msgid "Add"
+msgstr "Добавить"
+
+msgid "New slide"
+msgstr "Новый слайд"
+
+msgid "Editing"
+msgstr "Редактирование"
+
+msgid "Visibility: All participants"
+msgstr "Видимость: все участники"
+
+msgid "Reset Results"
+msgstr "Сброс результатов"
+
+msgid "Poll Topic"
+msgstr "Тема голосования"
+
+msgid "Your Question"
+msgstr "Ваш вопрос"
+
+msgid "Option A"
+msgstr "Вариант A"
+
+msgid "Option B"
+msgstr "Вариант B"
+
+msgid "Add Option"
+msgstr "Добавить вариант"

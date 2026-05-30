@@ -1,5 +1,4 @@
 {% load i18n %}
-{% get_current_language as CURRENT_LANGUAGE %}
 
 <header class="container-fluid d-flex justify-content-between align-items-center py-4 px-md-5">
     <a href="/" class="d-flex align-items-center gap-2 fs-4 fw-bold text-decoration-none text-dark">
@@ -16,34 +15,34 @@
             {% csrf_token %}
             <input type="hidden" name="next" value="{{ request.path }}">
 
-            <button type="submit" name="language" value="{% if CURRENT_LANGUAGE == 'ru' %}en{% else %}ru{% endif %}"
+            <button type="submit" name="language" value="{% if request.LANGUAGE_CODE == 'ru' %}en{% else %}ru{% endif %}"
                     class="btn btn-link d-flex align-items-center gap-1 text-secondary me-2 text-decoration-none p-0 border-0 bg-transparent shadow-none">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="12" r="10"></circle>
                     <line x1="2" y1="12" x2="22" y2="12"></line>
                     <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
                 </svg>
-                <span class="fw-bold">{% if CURRENT_LANGUAGE == 'ru' %}EN{% else %}RU{% endif %}</span>
+                <span class="fw-bold">{% if request.LANGUAGE_CODE == 'ru' %}EN{% else %}RU{% endif %}</span>
             </button>
         </form>
 
         {% if user.is_authenticated %}
             <span class="fw-semibold d-none d-sm-block text-dark">
-                {% trans "Привет" %}, {{ user.username }}!
+                {% trans "Hello" %}, {{ user.username }}!
             </span>
 
             <form method="post" action="{% url 'accounts:logout' %}" style="display: inline;">
                 {% csrf_token %}
                 <button type="submit" class="btn btn-outline-dark fw-semibold px-4 py-2">
-                    {% trans "Выход" %}
+                    {% trans "Logout" %}
                 </button>
             </form>
         {% else %}
             <a href="{% url 'accounts:login' %}" class="btn btn-outline-dark fw-semibold px-4 py-2 d-none d-sm-block">
-                {% trans "Войти" %}
+                {% trans "Login" %}
             </a>
             <a href="{% url 'accounts:signup' %}" class="btn btn-success fw-semibold px-4 py-2">
-                {% trans "Регистрация" %}
+                {% trans "Sign Up" %}
             </a>
         {% endif %}
     </div>
