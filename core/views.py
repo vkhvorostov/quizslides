@@ -1,9 +1,36 @@
+from datetime import timedelta
+
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
-from .models import Presentation, Slide
 import json
 from django.db import transaction
+from django.shortcuts import get_object_or_404, redirect, render
+from django.utils import timezone
+from django.utils.crypto import get_random_string
+from django.views.decorators.http import require_POST
+
+from .models import Presentation, Session, Slide
+
+
+SESSION_CODE_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
+
+
+def _generate_session_code():
+    while True:
+        code = get_random_string(6, allowed_chars=SESSION_CODE_ALPHABET)
+        if not Session.objects.filter(code=code, status=True).exists():
+            return code
+
+
+def _create_active_session(user):
+    return Session.objects.create(
+        status=True,
+        time_end=timezone.now() + timedelta(hours=4),
+        max_count_people=100,
+        code=_generate_session_code(),
+        id_user=user,
+    )
 
 
 @login_required
@@ -39,6 +66,54 @@ def editor_view(request, presentation_id):
     return render(request, 'core/editor.html', {
         'presentation': presentation,
         'slides': slides
+    })
+
+
+@login_required
+@require_POST
+def start_presentation(request, presentation_id):
+    presentation = get_object_or_404(
+        Presentation,
+        id_presentation=presentation_id,
+        id_user=request.user,
+    )
+
+    if not presentation.slides.exists():
+        messages.error(request, 'Добавьте хотя бы один слайд перед запуском')
+        return redirect('core:editor', presentation_id=presentation.id_presentation)
+
+    session = presentation.id_session
+    if session is None or not session.status:
+        session = _create_active_session(request.user)
+
+    presentation.id_session = session
+    presentation.status = True
+    presentation.save(update_fields=['id_session', 'status'])
+
+    return redirect('core:present_presentation', presentation_id=presentation.id_presentation)
+
+
+@login_required
+def present_presentation(request, presentation_id):
+    presentation = get_object_or_404(
+        Presentation,
+        id_presentation=presentation_id,
+        id_user=request.user,
+    )
+
+    if not presentation.status or presentation.id_session is None or not presentation.id_session.status:
+        messages.info(request, 'Сначала запустите презентацию')
+        return redirect('core:editor', presentation_id=presentation.id_presentation)
+
+    current_slide = presentation.slides.order_by('number').first()
+    if current_slide is None:
+        messages.error(request, 'Добавьте хотя бы один слайд перед запуском')
+        return redirect('core:editor', presentation_id=presentation.id_presentation)
+
+    return render(request, 'core/presenter.html', {
+        'presentation': presentation,
+        'session': presentation.id_session,
+        'current_slide': current_slide,
     })
 
 @login_required
