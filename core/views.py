@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
+from django.utils.translation import gettext as _
 from .models import Presentation, Slide
 import json
 from django.db import transaction
@@ -25,9 +26,9 @@ def create_presentation(request):
         else:
             return JsonResponse({
                 'success': False,
-                'error': 'Название не может быть пустым'
+                'error': _('Название не может быть пустым')
             }, status=400)
-    return JsonResponse({'success': False, 'error': 'Метод не разрешен'},
+    return JsonResponse({'success': False, 'error': _('Метод не разрешен')},
                         status=405)
 
 

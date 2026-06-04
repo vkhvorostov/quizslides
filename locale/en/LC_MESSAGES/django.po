@@ -3,7 +3,6 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
@@ -183,3 +182,28 @@ msgstr "Create"
 #: .\templates\index.html:124
 msgid "Презентация успешно создана!"
 msgstr "Presentation created successfully!"
+
+#: .\templates\index.html:5
+msgid "Главная"
+msgstr "Home"
+
+#: .\templates\index.html:42
+msgid "Создание контента на слайде"
+msgstr "Creating content on a slide"
+
+#: .\templates\core\editor.html:68
+msgid "Контент"
+msgstr "Content"
+
+#: .\core\views.py:28
+msgid "Название не может быть пустым"
+msgstr "Title cannot be empty"
+
+#: .\core\views.py:31
+msgid "Метод не разрешен"
+msgstr "Method not allowed"
+
+#: .\accounts\views.py:16
+#, python-format
+msgid "Аккаунт %(username)s успешно создан! Теперь войдите в систему."
+msgstr "Account %(username)s has been created! Please log in."

@@ -65,8 +65,8 @@
                         + {% trans "Добавить слайд" %}
                     </button>
                     <ul class="dropdown-menu w-100">
-                        <li><a class="dropdown-item" href="#" onclick="addSlide('CONTENT', event)">Контент</a></li>
-                        <li><a class="dropdown-item" href="#" onclick="addSlide('POLL', event)">Опрос</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="addSlide('CONTENT', event)">{% trans "Контент" %}</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="addSlide('POLL', event)">{% trans "Опрос" %}</a></li>
                     </ul>
                 </div>
             </div>
@@ -93,7 +93,7 @@
                             {% else %}
                             <div class="h-100 d-flex align-items-center justify-content-center">
                                 <small class="text-muted">
-                                    Пустой слайд
+                                    {% trans "Пустой слайд" %}
                                 </small>
                             </div>
                             {% endif %}
@@ -111,7 +111,7 @@
         <!-- Рабочая область (Canvas) -->
         <main class="flex-grow-1 bg-secondary bg-opacity-10 p-4 d-flex justify-content-center align-items-center">
             <div id="slide-editor" class="bg-white shadow-sm border rounded p-4" style="width: 800px; height: 450px; overflow:auto;">
-                <h3 class="text-center mt-5 text-muted">Выберите или создайте слайд</h3>
+                <h3 class="text-center mt-5 text-muted">{% trans "Выберите или создайте слайд" %}</h3>
             </div>
         </main>
     </div>

@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         saveStatus.style.display = 'inline';
-        saveStatus.innerText = 'Сохранение...';
+        saveStatus.innerText = gettext('Сохранение...');
 
         fetch(`/api/presentation/${presentationId}/update-title/`, {
             method: 'POST',
@@ -29,11 +29,11 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(data => {
             if (data.success) {
                 originalTitle = newTitle;
-                saveStatus.innerText = 'Сохранено';
+                saveStatus.innerText = gettext('Сохранено');
                 setTimeout(() => saveStatus.style.display = 'none', 2000);
             }
         }).catch(err => {
-            saveStatus.innerText = 'Ошибка сохранения';
+            saveStatus.innerText = gettext('Ошибка сохранения');
         });
     }
 
@@ -157,7 +157,7 @@ function addSlide(type, event) {
         body: JSON.stringify({ type: type })
     })
     .then(response => {
-        if (!response.ok) throw new Error('Ошибка сервера');
+        if (!response.ok) throw new Error(gettext('Ошибка сервера'));
         return response.json();
     })
     .then(data => {
@@ -175,10 +175,10 @@ function addSlide(type, event) {
                     <div class="card-body p-2">
                         <div class="d-flex justify-content-between mb-1">
                             <span class="badge bg-secondary"># ${data.number}</span>
-                            <span class="text-success" style="font-size: 10px;">● Active</span>
+                            <span class="text-success" style="font-size: 10px;">● ${gettext('Active')}</span>
                         </div>
                         <div class="preview-placeholder bg-light border rounded d-flex align-items-center justify-content-center" style="height: 80px;">
-                            <small class="text-muted">Новый слайд</small>
+                            <small class="text-muted">${gettext('Новый слайд')}</small>
                         </div>
                     </div>
                 </div>
@@ -198,7 +198,7 @@ function addSlide(type, event) {
     })
     .catch(err => {
         console.error("Ошибка:", err);
-        alert("Не удалось добавить слайд. Проверьте консоль (F12).");
+        alert(gettext('Не удалось добавить слайд. Проверьте консоль (F12).'));
     })
     .finally(() => {
         if (btn) btn.style.pointerEvents = 'auto';
@@ -223,7 +223,7 @@ function selectSlide(id) {
 
     editor.innerHTML = `
         <div class="text-center mt-5">
-            Загрузка...
+            ${gettext('Загрузка...')}
         </div>
     `;
 
@@ -262,7 +262,7 @@ function renderContentPreview(id, data) {
             }
 
             <div class="border rounded p-3 bg-light flex-grow-1">
-                ${data.content || 'Нет текста'}
+                ${data.content || gettext('Нет текста')}
             </div>
 
             <div class="mt-4">
@@ -270,7 +270,7 @@ function renderContentPreview(id, data) {
                     class="btn btn-primary"
                     onclick="openEditMode(${id})">
 
-                    Редактировать
+                    ${gettext('Редактировать')}
                 </button>
             </div>
 
@@ -286,17 +286,17 @@ function renderPollPreview(id, data) {
         <div class="h-100 d-flex flex-column justify-content-center">
 
             <h3 class="mb-4">
-                ${data.content || 'Новый опрос'}
+                ${data.content || gettext('Новый опрос')}
             </h3>
 
             <div class="d-grid gap-2">
 
                 <button class="btn btn-outline-primary">
-                    Вариант 1
+                    ${gettext('Вариант 1')}
                 </button>
 
                 <button class="btn btn-outline-primary">
-                    Вариант 2
+                    ${gettext('Вариант 2')}
                 </button>
 
             </div>
@@ -306,7 +306,7 @@ function renderPollPreview(id, data) {
                     class="btn btn-primary"
                     onclick="openPollEditMode(${id})">
 
-                    Редактировать опрос
+                    ${gettext('Редактировать опрос')}
                 </button>
             </div>
 
@@ -326,7 +326,7 @@ function openPollEditMode(id) {
             <div class="mb-3">
 
                 <label class="form-label">
-                    Вопрос
+                    ${gettext('Вопрос')}
                 </label>
 
                 <textarea
@@ -340,7 +340,7 @@ function openPollEditMode(id) {
                 class="btn btn-success"
                 onclick="saveSlideContent(${id})">
 
-                Сохранить
+                ${gettext('Сохранить')}
             </button>
         `;
     });
@@ -357,7 +357,7 @@ function openEditMode(id) {
         editor.innerHTML = `
             <div class="mb-3">
 
-                <label class="form-label">Текст</label>
+                <label class="form-label">${gettext('Текст')}</label>
 
                 <textarea
                     id="slide-content"
@@ -368,7 +368,7 @@ function openEditMode(id) {
 
             <div class="mb-3">
 
-                <label class="form-label">Картинка</label>
+                <label class="form-label">${gettext('Картинка')}</label>
 
                 <input
                     type="file"
@@ -393,14 +393,14 @@ function openEditMode(id) {
                 class="btn btn-success"
                 onclick="saveSlideContent(${id})">
 
-                Сохранить
+                ${gettext('Сохранить')}
             </button>
 
             <button
                 class="btn btn-secondary ms-2"
                 onclick="selectSlide(${id})">
 
-                Отмена
+                ${gettext('Отмена')}
             </button>
 
             <div id="slide-save-status"
@@ -438,7 +438,7 @@ function saveSlideContent(slideId) {
         const status = document.getElementById('slide-save-status');
 
         if (data.success) {
-            status.innerText = 'Сохранено';
+            status.innerText = gettext('Сохранено');
             const slideElement = document.querySelector(
     `[data-slide-id="${slideId}"] .preview-placeholder`);
     if (slideElement) {
@@ -470,10 +470,10 @@ function saveSlideContent(slideId) {
     }, 300);
         }
         else {
-            status.innerText = 'Ошибка';
+            status.innerText = gettext('Ошибка');
         }
     })
     .catch(() => {
-        document.getElementById('slide-save-status').innerText = 'Ошибка';
+        document.getElementById('slide-save-status').innerText = gettext('Ошибка');
     });
 }

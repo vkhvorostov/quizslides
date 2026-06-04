@@ -27,7 +27,7 @@ function createPresentation(event) {
     successDiv.style.display = 'none';
     
     if (!title) {
-        errorDiv.textContent = 'Введите название презентации';
+        errorDiv.textContent = gettext('Введите название презентации');
         errorDiv.style.display = 'block';
         return;
     }
@@ -53,8 +53,8 @@ function createPresentation(event) {
         </head>
         <body>
             <div class="container">
-                <h2>Создание презентации...</h2>
-                <p>Пожалуйста, подождите</p>
+                <h2>${gettext('Создание презентации...')}</h2>
+                <p>${gettext('Пожалуйста, подождите')}</p>
             </div>
         </body>
         </html>
@@ -73,7 +73,11 @@ function createPresentation(event) {
     .then(data => {
         if (data.success) {
             successDiv.style.display = 'block';
-            successDiv.textContent = `Презентация "${data.name}" успешно создана! Перенаправление...`;
+            successDiv.textContent = interpolate(
+                gettext('Презентация "%(name)s" успешно создана! Перенаправление...'),
+                { name: data.name },
+                true
+            );
             document.getElementById('createPresentationForm').reset();
             
             newTab.location.href = `/editor/${data.id}/`;
@@ -84,13 +88,13 @@ function createPresentation(event) {
             }, 1000);
         } else {
             newTab.close();
-            errorDiv.textContent = data.error || 'Ошибка при создании';
+            errorDiv.textContent = data.error || gettext('Ошибка при создании');
             errorDiv.style.display = 'block';
         }
     })
     .catch(error => {
         newTab.close();
-        errorDiv.textContent = 'Произошла ошибка. Попробуйте позже.';
+        errorDiv.textContent = gettext('Произошла ошибка. Попробуйте позже.');
         errorDiv.style.display = 'block';
     });
 }

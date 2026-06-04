@@ -1,0 +1,114 @@
+# JavaScript translations for QuizSlides.
+msgid ""
+msgstr ""
+"Project-Id-Version: QuizSlides\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: static/js/main.js
+msgid "Введите название презентации"
+msgstr "Enter a presentation title"
+
+#: static/js/main.js
+msgid "Создание презентации..."
+msgstr "Creating presentation..."
+
+#: static/js/main.js
+msgid "Пожалуйста, подождите"
+msgstr "Please wait"
+
+#: static/js/main.js
+#, python-format
+msgid "Презентация \"%(name)s\" успешно создана! Перенаправление..."
+msgstr "Presentation \"%(name)s\" created successfully! Redirecting..."
+
+#: static/js/main.js
+msgid "Ошибка при создании"
+msgstr "Creation failed"
+
+#: static/js/main.js
+msgid "Произошла ошибка. Попробуйте позже."
+msgstr "An error occurred. Please try again later."
+
+#: static/js/editor.js
+msgid "Сохранение..."
+msgstr "Saving..."
+
+#: static/js/editor.js
+msgid "Сохранено"
+msgstr "Saved"
+
+#: static/js/editor.js
+msgid "Ошибка сохранения"
+msgstr "Save failed"
+
+#: static/js/editor.js
+msgid "Ошибка сервера"
+msgstr "Server error"
+
+#: static/js/editor.js
+msgid "Active"
+msgstr "Active"
+
+#: static/js/editor.js
+msgid "Новый слайд"
+msgstr "New slide"
+
+#: static/js/editor.js
+msgid "Не удалось добавить слайд. Проверьте консоль (F12)."
+msgstr "Could not add slide. Check the console (F12)."
+
+#: static/js/editor.js
+msgid "Загрузка..."
+msgstr "Loading..."
+
+#: static/js/editor.js
+msgid "Нет текста"
+msgstr "No text"
+
+#: static/js/editor.js
+msgid "Редактировать"
+msgstr "Edit"
+
+#: static/js/editor.js
+msgid "Новый опрос"
+msgstr "New poll"
+
+#: static/js/editor.js
+msgid "Вариант 1"
+msgstr "Option 1"
+
+#: static/js/editor.js
+msgid "Вариант 2"
+msgstr "Option 2"
+
+#: static/js/editor.js
+msgid "Редактировать опрос"
+msgstr "Edit poll"
+
+#: static/js/editor.js
+msgid "Вопрос"
+msgstr "Question"
+
+#: static/js/editor.js
+msgid "Сохранить"
+msgstr "Save"
+
+#: static/js/editor.js
+msgid "Текст"
+msgstr "Text"
+
+#: static/js/editor.js
+msgid "Картинка"
+msgstr "Image"
+
+#: static/js/editor.js
+msgid "Отмена"
+msgstr "Cancel"
+
+#: static/js/editor.js
+msgid "Ошибка"
+msgstr "Error"

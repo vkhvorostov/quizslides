@@ -2,7 +2,7 @@
 
 {% load i18n %}
 
-{% block title %}Главная | QuizSlides{% endblock %}
+{% block title %}{% trans "Главная" %} | QuizSlides{% endblock %}
 
 {% block content %}
 <div class="text-center d-flex flex-column justify-content-center flex-grow-1 py-5"
@@ -39,7 +39,7 @@
         <div class="d-flex flex-wrap justify-content-center gap-4">
             <div class="text-center" style="width: 240px;">
                 <div class="rounded-4 shadow-sm overflow-hidden mb-2" style="height: 240px;">
-                    <img src="/static/drawable/create_content_on_slide.png" alt="Создание контента на слайде"
+                    <img src="/static/drawable/create_content_on_slide.png" alt="{% trans 'Создание контента на слайде' %}"
                          style="width: 100%; height: 100%; object-fit: cover;" draggable="false">
                 </div>
                 <p class="fw-semibold text-secondary">{% trans "Добавление контента на слайд" %}</p>
