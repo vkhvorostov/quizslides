@@ -1,8 +1,16 @@
 # Создание презентаций
 На главном экране нажмите кнопку «Создать презентацию».
+
+<img width="2047" height="1008" alt="Главное меню" src="https://github.com/user-attachments/assets/c6aaf094-0a1e-4fa4-a292-ecb3fa4428c6" />
+
+
 ### index.html
     <button type="button" onclick="openPopup()" id="openPopupBtn" class="btn btn-success btn-lg fw-semibold px-4 py-3">Создать презентацию</button>
 Во всплывающем окне введите название презентации и нажмите «Создать».
+
+<img width="2047" height="1012" alt="изображение" src="https://github.com/user-attachments/assets/20fc3e73-26d8-4071-8f73-47fa033cae14" />
+
+
 ### index.html
     <div id="popupWindow" ...>
     <h5 class="text-center mb-3">Создание презентации</h5>
@@ -127,6 +135,9 @@
     });
 
 При успешном ответе открывается новая вкладка с информацией о созданной презентации, а всплывающее окно автоматически закрывается.
+
+<img width="2038" height="1018" alt="изображение" src="https://github.com/user-attachments/assets/2f96e2f3-3ca6-4168-be2e-29d6c94f671e" />
+
 ### index.html
     <div id="popupWindow" ...>
             <div id="successMessage" style="display:none;" class="alert alert-success mt-3">
