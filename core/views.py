@@ -122,6 +122,30 @@ def get_slide(request, slide_id):
         'slide_type': slide.slide_type,
         'picture_url': slide.picture.url if slide.picture else None
     })
+@login_required
+def delete_slide(request, slide_id):
+    if request.method != 'POST':
+        return JsonResponse({'success': False}, status=405)
+
+    slide = get_object_or_404(
+        Slide,
+        id_slide=slide_id,
+        id_presentation__id_user=request.user
+    )
+    presentation = slide.id_presentation
+    slide.delete()
+
+    # Перенумеровываем оставшиеся слайды
+    with transaction.atomic():
+        for index, s in enumerate(
+            presentation.slides.order_by('number'), start=1
+        ):
+            s.number = index
+            s.save(update_fields=['number'])
+
+    return JsonResponse({'success': True})
+
+
 def reorder_slides(request, presentation_id):
     if request.method == 'POST':
         presentation = get_object_or_404(Presentation, id_presentation=presentation_id, id_user=request.user)
