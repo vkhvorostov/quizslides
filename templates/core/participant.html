@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Участник" %} — QuizSlides{% endblock %}
+
+{% block content %}
+<div class="container py-5" style="max-width: 560px;">
+    <div class="text-center mb-3">
+        <small class="text-muted">{% trans "Код сессии" %}</small>
+        <div class="fs-4 fw-bold">{{ session.code }}</div>
+        <small class="text-muted">{{ member.name }}</small>
+    </div>
+
+    <div id="participant-panel" class="card shadow-sm border-0 p-4">
+        <p class="text-center text-muted">{% trans "Загрузка..." %}</p>
+    </div>
+</div>
+
+<input type="hidden" id="session-code" value="{{ session.code }}">
+<input type="hidden" id="csrf-token" value="{{ csrf_token }}">
+<script src="{% static 'js/participant.js' %}?v=1"></script>
+{% endblock %}

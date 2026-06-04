@@ -18,6 +18,7 @@ class Session(models.Model):
     time_end = models.DateTimeField()
     max_count_people = models.IntegerField()
     code = models.CharField(max_length=10)
+    current_slide_number = models.IntegerField(default=1)
     id_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True,
                                 related_name='sessions')
 
@@ -128,3 +129,23 @@ class Vote(models.Model):
                                         related_name='votes_in_presentation')
     id_widget = models.ForeignKey(Widget, on_delete=models.CASCADE,
                                   related_name='votes_in_widget')
+
+
+class PollVote(models.Model):
+    """Голос участника за вариант ответа на слайде-опросе"""
+    id_poll_vote = models.AutoField(primary_key=True)
+    id_slide = models.ForeignKey(Slide, on_delete=models.CASCADE,
+                                 related_name='poll_votes')
+    id_member = models.ForeignKey(Member, on_delete=models.CASCADE,
+                                  related_name='poll_votes')
+    id_answer_option = models.ForeignKey(
+        AnswerOption, on_delete=models.CASCADE, related_name='poll_votes'
+    )
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['id_slide', 'id_member'],
+                name='unique_poll_vote_per_slide',
+            ),
+        ]
