@@ -173,9 +173,11 @@ function addSlide(type, event) {
                      onclick="selectSlide('${data.id_slide}')"
                      style="cursor: grab; opacity: 0; transform: translateY(10px); transition: all 0.3s;">
                     <div class="card-body p-2">
-                        <div class="d-flex justify-content-between mb-1">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
                             <span class="badge bg-secondary"># ${data.number}</span>
-                            <span class="text-success" style="font-size: 10px;">● Active</span>
+                            <button class="btn btn-link p-0 text-danger" style="font-size: 14px; line-height: 1;"
+                                    onclick="deleteSlide(${data.id_slide}, event)"
+                                    title="Удалить слайд">&times;</button>
                         </div>
                         <div class="preview-placeholder bg-light border rounded d-flex align-items-center justify-content-center" style="height: 80px;">
                             <small class="text-muted">Новый слайд</small>
@@ -203,6 +205,43 @@ function addSlide(type, event) {
     .finally(() => {
         if (btn) btn.style.pointerEvents = 'auto';
     });
+}
+
+function deleteSlide(slideId, event) {
+    event.stopPropagation();
+
+    const csrfToken = document.getElementById('csrf-token').value;
+
+    fetch(`/api/slide/${slideId}/delete/`, {
+        method: 'POST',
+        headers: { 'X-CSRFToken': csrfToken }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (!data.success) return;
+
+        const slideEl = document.querySelector(`[data-slide-id="${slideId}"]`);
+        if (slideEl) slideEl.remove();
+
+        // Перенумеровываем оставшиеся слайды в интерфейсе
+        document.querySelectorAll('.slide-thumbnail').forEach((el, index) => {
+            const badge = el.querySelector('.badge');
+            if (badge) badge.innerText = `# ${index + 1}`;
+        });
+
+        // Если удалённый слайд был выбран — очищаем редактор
+        const editor = document.getElementById('slide-editor');
+        if (editor && slideEl && slideEl.classList.contains('border-primary')) {
+            editor.innerHTML = '<h3 class="text-center mt-5 text-muted">Выберите или создайте слайд</h3>';
+        }
+
+        // Показываем заглушку если слайдов не осталось
+        const container = document.getElementById('slides-list');
+        if (container && container.querySelectorAll('.slide-thumbnail').length === 0) {
+            container.innerHTML = '<div id="no-slides-msg" class="text-center py-5 text-muted"><p>Слайдов пока нет</p></div>';
+        }
+    })
+    .catch(err => console.error('Ошибка удаления:', err));
 }
 
 function selectSlide(id) {
