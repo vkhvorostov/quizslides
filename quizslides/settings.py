@@ -89,7 +89,7 @@ WSGI_APPLICATION = 'quizslides.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DB_NAME', 'quizslides_bd'),
+        'NAME': os.getenv('DB_NAME', 'quizslides_db'),
         'USER': os.getenv('DB_USER', 'postgres'),
         'PASSWORD': os.getenv('DB_PASSWORD', 'GroupconnectedDB'),
         'HOST': os.getenv('DB_HOST', 'localhost'),
