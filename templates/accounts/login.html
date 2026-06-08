@@ -1,15 +1,15 @@
 {% extends 'base.html' %}
 {% load i18n %}
 
-{% block title %}{% trans "Вход" %} | QuizSlides{% endblock %}
+{% block title %}{% trans "Login" %} | QuizSlides{% endblock %}
 
 {% block content %}
 <div class="text-center d-flex flex-column justify-content-center flex-grow-1 py-5" style="background-image: radial-gradient(circle at 50% 50%, rgba(240, 249, 245, 0.5) 0%, rgba(255, 255, 255, 1) 100%);">
 
     <div class="mx-auto" style="max-width: 450px; width: 100%;">
         
-        <h1 class="display-5 fw-bold text-dark mb-2">{% trans "Вход" %}</h1>
-        <p class="text-muted mb-4">{% trans "Добро пожаловать обратно в QuizSlides" %}</p>
+        <h1 class="display-5 fw-bold text-dark mb-2">{% trans "Login" %}</h1>
+        <p class="text-muted mb-4">{% trans "Welcome back to QuizSlides" %}</p>
 
         <div class="bg-white rounded-4 shadow-sm p-4">
             <form method="post">
@@ -42,14 +42,14 @@
                 </div>
 
                 <div class="d-grid">
-                    <button type="submit" class="btn btn-success btn-lg fw-semibold">{% trans "Войти" %}</button>
+                    <button type="submit" class="btn btn-success btn-lg fw-semibold">{% trans "Login" %}</button>
                 </div>
             </form>
         </div>
 
         <p class="mt-4">
-            <span class="text-muted">{% trans "Нет аккаунта?" %}</span>
-            <a href="{% url 'accounts:signup' %}" class="fw-semibold text-success text-decoration-none">{% trans "Зарегистрироваться" %}</a>
+            <span class="text-muted">{% trans "Don't have an account?" %}</span>
+            <a href="{% url 'accounts:signup' %}" class="fw-semibold text-success text-decoration-none">{% trans "Sign Up" %}</a>
         </p>
 
     </div>

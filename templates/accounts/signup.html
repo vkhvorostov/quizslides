@@ -2,7 +2,7 @@
 
 {% load i18n %}
 
-{% block title %}{% trans "Регистрация" %}   - QuizSlides{% endblock %}
+{% block title %}{% trans "Sign Up" %}   - QuizSlides{% endblock %}
 
 {% block content %}
 <div class="text-center d-flex flex-column justify-content-center flex-grow-1 py-5" style="background-image: radial-gradient(circle at 50% 50%, rgba(240, 249, 245, 0.5) 0%, rgba(255, 255, 255, 1) 100%);">
@@ -13,7 +13,7 @@
             border-radius: 20px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         ">
-            <h2 class="display-6 fw-bold text-dark mb-4 text-center">{% trans "Регистрация" %}</h2>
+            <h2 class="display-6 fw-bold text-dark mb-4 text-center">{% trans "Sign Up" %}</h2>
 
             <form method="post">
                 {% csrf_token %}
@@ -59,13 +59,13 @@
 
                 <div class="d-grid gap-3">
                     <button type="submit" class="btn btn-success btn-lg fw-semibold px-4 py-3" style="background-color: #198754; border: none;">
-                        {% trans "Зарегистрироваться" %}
+                        {% trans "Sign Up" %}
                     </button>
                 </div>
             </form>
 
             <p class="mt-4 text-center text-muted">
-                {% trans "Уже есть аккаунт?" %} <a href="{% url 'accounts:login' %}" class="text-decoration-none fw-semibold" style="color: #198754;">{% trans "Войти" %}</a>
+                {% trans "Already have an account?" %} <a href="{% url 'accounts:login' %}" class="text-decoration-none fw-semibold" style="color: #198754;">{% trans "Login" %}</a>
             </p>
         </div>
     </div>
