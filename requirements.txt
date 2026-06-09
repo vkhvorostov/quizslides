@@ -1,5 +1,5 @@
 asgiref==3.11.1
-Django==5.2.3
+Django==6.0.2
 django-bootstrap5==26.2
 legacy-cgi==2.6.4
 python-dotenv==1.0.1

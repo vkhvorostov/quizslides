@@ -178,7 +178,7 @@ function addSlide(type, event) {
                             <div class="d-flex align-items-center gap-1">
                                 <span class="text-success" style="font-size: 10px;">● Active</span>
                                 <button type="button" class="btn btn-sm btn-link text-danger p-0 lh-1"
-                                        onclick="event.stopPropagation(); deleteSlide('${data.id_slide}')">&times;</button>
+                                        onclick="deleteSlide(${data.id_slide}, event)">&times;</button>
                             </div>
                         </div>
                         <div class="preview-placeholder bg-light border rounded d-flex align-items-center justify-content-center" style="height: 80px;">
@@ -504,7 +504,8 @@ function savePollSlide(slideId) {
     });
 }
 
-function deleteSlide(slideId) {
+function deleteSlide(slideId, event = null) {
+    if (event) event.stopPropagation();
     if (!confirm('Удалить этот слайд?')) return;
 
     const csrfToken = document.getElementById('csrf-token').value;

@@ -2,7 +2,7 @@
 
 {% load i18n %}
 
-{% block title %}Главная | QuizSlides{% endblock %}
+{% block title %}Home | QuizSlides{% endblock %}
 
 {% block content %}
 <div class="text-center d-flex flex-column justify-content-center flex-grow-1 py-5"
@@ -10,64 +10,72 @@
 
     <div class="mb-5 pb-4">
         <h1 class="display-5 fw-bold text-dark mb-5 mx-auto" style="max-width: 800px; line-height: 1.2;">
-            {% trans "Универсальная платформа для лекций, семинаров и студенческих мероприятий" %}
+            {% trans "Universal platform for lectures, seminars and student events" %}
         </h1>
 
         <div class="d-flex flex-column flex-md-row justify-content-center align-items-center gap-3">
-            <span class="fs-4 fw-semibold text-dark">{% trans "Вы участник?" %}</span>
+            <span class="fs-4 fw-semibold text-dark">{% trans "Are you a participant?" %}</span>
 
             <form action="{% url 'core:join_session' %}" method="post" class="d-flex flex-column flex-md-row gap-3">
                 {% csrf_token %}
                 <input type="text" name="code"
                        class="form-control form-control-lg text-center border-0 bg-light shadow-none"
-                       placeholder="{% trans 'ВВЕДИТЕ КОД' %}" style="width: 200px;" required maxlength="10">
-                <button type="submit" class="btn btn-success btn-lg fw-semibold px-4 py-3">{% trans "Присоединиться" %}</button>
+                       placeholder="{% trans 'ENTER CODE' %}" style="width: 200px;" required maxlength="10">
+                <button type="submit" class="btn btn-success btn-lg fw-semibold px-4 py-3">
+                    {% trans "Join" %}
+                </button>
             </form>
         </div>
 
         {% if user.is_authenticated %}
         <div class="d-flex flex-column flex-md-row justify-content-center align-items-center gap-3 mt-4">
-            <span class="fs-4 fw-semibold text-dark">{% trans "Вы организатор?" %}</span>
+            <span class="fs-4 fw-semibold text-dark">{% trans "Are you an organizer?" %}</span>
             <button type="button" onclick="openPopup()" id="openPopupBtn"
-                    class="btn btn-success btn-lg fw-semibold px-4 py-3">{% trans "Создать презентацию" %}
+                    class="btn btn-success btn-lg fw-semibold px-4 py-3">
+                {% trans "Create presentation" %}
             </button>
         </div>
         {% endif %}
     </div>
 
     <div class="mt-4">
-        <h2 class="display-6 fw-bold text-dark mb-5">{% trans "Возможности платформы" %}</h2>
+        <h2 class="display-6 fw-bold text-dark mb-5">{% trans "Platform features" %}</h2>
         <div class="d-flex flex-wrap justify-content-center gap-4">
+
             <div class="text-center" style="width: 240px;">
                 <div class="rounded-4 shadow-sm overflow-hidden mb-2" style="height: 240px;">
-                    <img src="/static/drawable/create_content_on_slide.png" alt="Создание контента на слайде"
+                    <img src="/static/drawable/create_content_on_slide.png"
+                         alt="{% trans 'Adding content to a slide' %}"
                          style="width: 100%; height: 100%; object-fit: cover;" draggable="false">
                 </div>
-                <p class="fw-semibold text-secondary">{% trans "Добавление контента на слайд" %}</p>
+                <p class="fw-semibold text-secondary">{% trans "Adding content to a slide" %}</p>
             </div>
 
             <div class="text-center" style="width: 240px;">
                 <div class="rounded-4 shadow-sm overflow-hidden mb-2" style="height: 240px;">
-                    <img src="/static/drawable/create_new_presentation.png" alt="{% trans 'Создание презентации' %}"
+                    <img src="/static/drawable/create_new_presentation.png"
+                         alt="{% trans 'Presentation creation' %}"
                          style="width: 100%; height: 100%; object-fit: cover;" draggable="false">
                 </div>
-                <p class="fw-semibold text-secondary">{% trans "Создание презентации" %}</p>
+                <p class="fw-semibold text-secondary">{% trans "Presentation creation" %}</p>
             </div>
 
             <div class="text-center" style="width: 240px;">
                 <div class="rounded-4 shadow-sm overflow-hidden mb-2" style="height: 240px;">
-                    <img src="/static/drawable/edit_presentation.png" alt="{% trans 'Редактирование презентации' %}"
+                    <img src="/static/drawable/edit_presentation.png"
+                         alt="{% trans 'Presentation editing' %}"
                          style="width: 100%; height: 100%; object-fit: cover;" draggable="false">
                 </div>
-                <p class="fw-semibold text-secondary">{% trans "Редактирование презентации" %}</p>
+                <p class="fw-semibold text-secondary">{% trans "Presentation editing" %}</p>
             </div>
 
             <div class="text-center" style="width: 240px;">
                 <div class="rounded-4 shadow-sm overflow-hidden mb-2" style="height: 240px;">
-                    <img src="/static/drawable/ai_slide_generator.png" alt="{% trans 'AI генерация слайдов' %}"
+                    <img src="/static/drawable/ai_slide_generator.png"
+                         alt="{% trans 'AI slide generation' %}"
                          style="width: 100%; height: 100%; object-fit: cover;" draggable="false">
                 </div>
-                <p class="fw-semibold text-secondary">{% trans "AI генерация слайдов (Скоро)" %}</p>
+                <p class="fw-semibold text-secondary">{% trans "AI slide generation (Soon)" %}</p>
             </div>
 
         </div>
@@ -107,22 +115,22 @@
             </button>
         </div>
 
-        <h5 class="text-center mb-3">{% trans "Создание презентации" %}</h5>
+        <h5 class="text-center mb-3">{% trans "Presentation creation" %}</h5>
 
         <form id="createPresentationForm" onsubmit="createPresentation(event)">
             {% csrf_token %}
             <div class="mb-3">
                 <input type="text" name="title" id="presentationTitle" class="form-control"
-                       placeholder="{% trans 'Название презентации' %}" required>
+                       placeholder="{% trans 'Presentation title' %}" required>
                 <div class="invalid-feedback" id="titleError" style="display:none;"></div>
             </div>
             <div class="d-grid">
-                <button type="submit" class="btn btn-success">{% trans "Создать" %}</button>
+                <button type="submit" class="btn btn-success">{% trans "Create" %}</button>
             </div>
         </form>
 
         <div id="successMessage" style="display:none;" class="alert alert-success mt-3">
-            {% trans "Презентация успешно создана!" %}
+            {% trans "Presentation created successfully!" %}
         </div>
     </div>
 </div>

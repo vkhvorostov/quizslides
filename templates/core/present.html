@@ -63,7 +63,7 @@
             {% else %}
             <span class="btn btn-outline-secondary disabled">&larr; {% trans "Назад" %}</span>
             {% endif %}
-            <span class="text-muted">{{ current_index }} / {{ total_slides }}</span>
+            <span class="text-muted">{% trans "Слайд" %} {{ current_slide.number }} ({{ current_index }} / {{ total_slides }})</span>
             {% if current_index < total_slides %}
             <a href="?slide={{ current_index|add:1 }}" class="btn btn-outline-primary">{% trans "Вперёд" %} &rarr;</a>
             {% else %}

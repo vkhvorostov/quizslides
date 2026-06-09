@@ -1,5 +1,4 @@
 import json
-import random
 from datetime import timedelta
 
 from django.contrib import messages
@@ -8,6 +7,8 @@ from django.db import transaction
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
+from django.utils.crypto import get_random_string
+from django.views.decorators.http import require_POST
 
 from .models import AnswerOption, Member, PollVote, Presentation, Session, Slide, Widget
 from .poll_live import (
@@ -17,6 +18,9 @@ from .poll_live import (
     get_member_from_request,
     poll_results_for_slide,
 )
+
+
+SESSION_CODE_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
 
 
 def _ensure_poll_widget(slide):
@@ -40,11 +44,20 @@ def _poll_options_payload(slide):
 
 
 def _generate_session_code():
-    for _ in range(50):
-        code = f'{random.randint(0, 999999):06d}'
+    while True:
+        code = get_random_string(6, allowed_chars=SESSION_CODE_ALPHABET)
         if not Session.objects.filter(code=code, status=True).exists():
             return code
-    raise RuntimeError('Не удалось сгенерировать код сессии')
+
+
+def _create_active_session(user):
+    return Session.objects.create(
+        status=True,
+        time_end=timezone.now() + timedelta(hours=4),
+        max_count_people=100,
+        code=_generate_session_code(),
+        id_user=user,
+    )
 
 
 @login_required
@@ -84,44 +97,45 @@ def editor_view(request, presentation_id):
 
 
 @login_required
+@require_POST
 def start_presentation(request, presentation_id):
-    if request.method != 'POST':
-        return redirect('core:editor', presentation_id=presentation_id)
-
     presentation = get_object_or_404(
-        Presentation, id_presentation=presentation_id, id_user=request.user
-    )
-    if not presentation.slides.exists():
-        messages.error(request, 'Добавьте хотя бы один слайд перед запуском.')
-        return redirect('core:editor', presentation_id=presentation_id)
-
-    if presentation.id_session_id and presentation.id_session.status:
-        return redirect('core:present', presentation_id=presentation_id)
-
-    session = Session.objects.create(
-        status=True,
-        time_end=timezone.now() + timedelta(hours=24),
-        max_count_people=100,
-        code=_generate_session_code(),
+        Presentation,
+        id_presentation=presentation_id,
         id_user=request.user,
     )
+
+    if not presentation.slides.exists():
+        messages.error(request, 'Добавьте хотя бы один слайд перед запуском')
+        return redirect('core:editor', presentation_id=presentation.id_presentation)
+
+    session = presentation.id_session
+    if session is None or not session.status:
+        session = _create_active_session(request.user)
+
     presentation.id_session = session
     presentation.status = True
     presentation.save(update_fields=['id_session', 'status'])
-    return redirect('core:present', presentation_id=presentation_id)
+
+    return redirect('core:present_presentation', presentation_id=presentation.id_presentation)
 
 
 @login_required
-def present_view(request, presentation_id):
+def present_presentation(request, presentation_id):
     presentation = get_object_or_404(
-        Presentation, id_presentation=presentation_id, id_user=request.user
+        Presentation,
+        id_presentation=presentation_id,
+        id_user=request.user,
     )
+
+    if not presentation.status or presentation.id_session is None or not presentation.id_session.status:
+        messages.info(request, 'Сначала запустите презентацию')
+        return redirect('core:editor', presentation_id=presentation.id_presentation)
+
     slides = list(presentation.slides.order_by('number'))
     if not slides:
-        messages.error(request, 'Добавьте хотя бы один слайд перед запуском.')
-        return redirect('core:editor', presentation_id=presentation_id)
-    if not presentation.id_session_id:
-        return redirect('core:editor', presentation_id=presentation_id)
+        messages.error(request, 'Добавьте хотя бы один слайд перед запуском')
+        return redirect('core:editor', presentation_id=presentation.id_presentation)
 
     try:
         current_index = int(request.GET.get('slide', 1))
@@ -288,16 +302,15 @@ def delete_slide(request, slide_id):
         id_slide=slide_id,
         id_presentation__id_user=request.user,
     )
-    presentation_id = slide.id_presentation_id
-    slide.delete()
+    presentation = slide.id_presentation
 
-    for index, remaining in enumerate(
-        Slide.objects.filter(id_presentation_id=presentation_id).order_by('number'),
-        start=1,
-    ):
-        if remaining.number != index:
-            remaining.number = index
-            remaining.save(update_fields=['number'])
+    with transaction.atomic():
+        slide.delete()
+        for index, s in enumerate(
+            presentation.slides.order_by('number'), start=1
+        ):
+            s.number = index
+            s.save(update_fields=['number'])
 
     return JsonResponse({'success': True})
 
