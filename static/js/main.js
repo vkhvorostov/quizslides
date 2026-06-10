@@ -3,6 +3,13 @@ function openPopup() {
     document.getElementById("popupWindow").style.display = "flex";
 }
 
+document.addEventListener('DOMContentLoaded', function() {
+    if (new URLSearchParams(window.location.search).get('create') === '1'
+        && document.getElementById('openPopupBtn')) {
+        openPopup();
+    }
+});
+
 function closePopup() {
     document.getElementById("popupWindow").style.display = "none";
 }

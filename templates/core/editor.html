@@ -35,6 +35,11 @@
         box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         transform: translateY(-2px);
     }
+
+    .slide-multiline {
+        white-space: pre-wrap;
+        word-break: break-word;
+    }
 </style>
 
 <div class="d-flex flex-column vh-100">
@@ -84,15 +89,18 @@
                     <div class="card-body p-2">
                         <div class="d-flex justify-content-between align-items-center mb-1">
                             <span class="badge bg-secondary"># {{ slide.number }}</span>
-                            <button class="btn btn-link p-0 text-danger" style="font-size: 14px; line-height: 1;"
-                                    onclick="deleteSlide({{ slide.id_slide }}, event)"
-                                    title="Удалить слайд">&times;</button>
+                            <div class="d-flex align-items-center gap-1">
+                                {% if slide.status %}<span class="text-success" style="font-size: 10px;">● {% trans "Active" %}</span>{% endif %}
+                                <button type="button" class="btn btn-sm btn-link text-danger p-0 lh-1"
+                                        title="{% trans 'Delete slide' %}"
+                                        onclick="deleteSlide({{ slide.id_slide }}, event)">&times;</button>
+                            </div>
                         </div>
                         <div class="preview-placeholder bg-light border rounded p-2 overflow-hidden" style="height: 80px;">
                             {% if slide.picture %}
                             <img src="{{ slide.picture.url }}" class="img-fluid w-100 h-100 rounded" style="object-fit: cover;">
                             {% elif slide.content %}
-                            <small class="text-muted d-block" style="overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;">
+                            <small class="text-muted d-block slide-multiline" style="overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;">
                                 {{ slide.content }}
                             </small>
                             {% else %}
@@ -122,5 +130,5 @@
     </div>
 </div>
 
-<script src="{% static 'js/editor.js' %}"></script>
+<script src="{% static 'js/editor.js' %}?v=3"></script>
 {% endblock %}

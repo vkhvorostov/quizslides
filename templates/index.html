@@ -16,10 +16,11 @@
         <div class="d-flex flex-column flex-md-row justify-content-center align-items-center gap-3">
             <span class="fs-4 fw-semibold text-dark">{% trans "Are you a participant?" %}</span>
 
-            <form action="#" method="GET" class="d-flex flex-column flex-md-row gap-3">
+            <form action="{% url 'core:join_session' %}" method="post" class="d-flex flex-column flex-md-row gap-3">
+                {% csrf_token %}
                 <input type="text" name="code"
                        class="form-control form-control-lg text-center border-0 bg-light shadow-none"
-                       placeholder="{% trans 'ENTER CODE' %}" style="width: 200px;" required>
+                       placeholder="{% trans 'ENTER CODE' %}" style="width: 200px;" required maxlength="10">
                 <button type="submit" class="btn btn-success btn-lg fw-semibold px-4 py-3">
                     {% trans "Join" %}
                 </button>

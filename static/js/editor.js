@@ -175,9 +175,11 @@ function addSlide(type, event) {
                     <div class="card-body p-2">
                         <div class="d-flex justify-content-between align-items-center mb-1">
                             <span class="badge bg-secondary"># ${data.number}</span>
-                            <button class="btn btn-link p-0 text-danger" style="font-size: 14px; line-height: 1;"
-                                    onclick="deleteSlide(${data.id_slide}, event)"
-                                    title="Удалить слайд">&times;</button>
+                            <div class="d-flex align-items-center gap-1">
+                                <span class="text-success" style="font-size: 10px;">● Active</span>
+                                <button type="button" class="btn btn-sm btn-link text-danger p-0 lh-1"
+                                        onclick="deleteSlide(${data.id_slide}, event)">&times;</button>
+                            </div>
                         </div>
                         <div class="preview-placeholder bg-light border rounded d-flex align-items-center justify-content-center" style="height: 80px;">
                             <small class="text-muted">Новый слайд</small>
@@ -207,41 +209,37 @@ function addSlide(type, event) {
     });
 }
 
-function deleteSlide(slideId, event) {
-    event.stopPropagation();
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text || '';
+    return div.innerHTML;
+}
 
-    const csrfToken = document.getElementById('csrf-token').value;
-
-    fetch(`/api/slide/${slideId}/delete/`, {
-        method: 'POST',
-        headers: { 'X-CSRFToken': csrfToken }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (!data.success) return;
-
-        const slideEl = document.querySelector(`[data-slide-id="${slideId}"]`);
-        if (slideEl) slideEl.remove();
-
-        // Перенумеровываем оставшиеся слайды в интерфейсе
-        document.querySelectorAll('.slide-thumbnail').forEach((el, index) => {
-            const badge = el.querySelector('.badge');
-            if (badge) badge.innerText = `# ${index + 1}`;
-        });
-
-        // Если удалённый слайд был выбран — очищаем редактор
-        const editor = document.getElementById('slide-editor');
-        if (editor && slideEl && slideEl.classList.contains('border-primary')) {
-            editor.innerHTML = '<h3 class="text-center mt-5 text-muted">Выберите или создайте слайд</h3>';
+function parseApiResponse(response) {
+    return response.text().then(text => {
+        try {
+            return { ok: response.ok, data: JSON.parse(text) };
+        } catch (e) {
+            return {
+                ok: false,
+                data: {
+                    success: false,
+                    error: response.ok ? 'Неверный ответ сервера' : `Ошибка ${response.status}. Перезапустите сервер (Ctrl+C, затем runserver).`
+                }
+            };
         }
+    });
+}
 
-        // Показываем заглушку если слайдов не осталось
-        const container = document.getElementById('slides-list');
-        if (container && container.querySelectorAll('.slide-thumbnail').length === 0) {
-            container.innerHTML = '<div id="no-slides-msg" class="text-center py-5 text-muted"><p>Слайдов пока нет</p></div>';
-        }
-    })
-    .catch(err => console.error('Ошибка удаления:', err));
+function deleteSlideButtonHtml(id) {
+    return `<button type="button" class="btn btn-outline-danger" onclick="deleteSlide(${id})">Удалить слайд</button>`;
+}
+
+function getPollOptionsList(data) {
+    if (data.answer_options && data.answer_options.length > 0) {
+        return data.answer_options;
+    }
+    return [{ text: 'Вариант 1' }, { text: 'Вариант 2' }];
 }
 
 function selectSlide(id) {
@@ -300,17 +298,13 @@ function renderContentPreview(id, data) {
                 ''
             }
 
-            <div class="border rounded p-3 bg-light flex-grow-1">
-                ${data.content || 'Нет текста'}
+            <div class="border rounded p-3 bg-light flex-grow-1 slide-multiline">
+                ${escapeHtml(data.content) || 'Нет текста'}
             </div>
 
-            <div class="mt-4">
-                <button
-                    class="btn btn-primary"
-                    onclick="openEditMode(${id})">
-
-                    Редактировать
-                </button>
+            <div class="mt-4 d-flex flex-wrap gap-2">
+                <button class="btn btn-primary" onclick="openEditMode(${id})">Редактировать</button>
+                ${deleteSlideButtonHtml(id)}
             </div>
 
         </div>
@@ -320,37 +314,62 @@ function renderContentPreview(id, data) {
 function renderPollPreview(id, data) {
 
     const editor = document.getElementById('slide-editor');
+    const options = getPollOptionsList(data);
+    const optionsHtml = options.map(opt => `
+        <button type="button" class="btn btn-outline-primary text-start" disabled>
+            ${escapeHtml(opt.text)}
+        </button>
+    `).join('');
 
     editor.innerHTML = `
         <div class="h-100 d-flex flex-column justify-content-center">
 
-            <h3 class="mb-4">
-                ${data.content || 'Новый опрос'}
-            </h3>
+            <h3 class="mb-4 slide-multiline">${escapeHtml(data.content || 'Новый опрос')}</h3>
 
-            <div class="d-grid gap-2">
+            <div class="d-grid gap-2">${optionsHtml}</div>
 
-                <button class="btn btn-outline-primary">
-                    Вариант 1
-                </button>
-
-                <button class="btn btn-outline-primary">
-                    Вариант 2
-                </button>
-
-            </div>
-
-            <div class="mt-4">
-                <button
-                    class="btn btn-primary"
-                    onclick="openPollEditMode(${id})">
-
-                    Редактировать опрос
-                </button>
+            <p class="text-center text-muted small">Голосуют зрители по коду сессии (кнопки у вас неактивны).</p>
+            <div class="mt-2 d-flex flex-wrap gap-2 justify-content-center">
+                <button class="btn btn-primary" onclick="openPollEditMode(${id})">Редактировать опрос</button>
+                ${deleteSlideButtonHtml(id)}
             </div>
 
         </div>
     `;
+}
+
+function appendPollOptionRow(container, value = '') {
+    const row = document.createElement('div');
+    row.className = 'input-group mb-2 poll-option-row';
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'form-control poll-option-input';
+    input.maxLength = 50;
+    input.placeholder = 'Вариант ответа';
+    input.value = value || '';
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'btn btn-outline-secondary';
+    btn.textContent = '×';
+    btn.addEventListener('click', () => removePollOptionRow(btn));
+    row.appendChild(input);
+    row.appendChild(btn);
+    container.appendChild(row);
+}
+
+function addPollOptionRow() {
+    const container = document.getElementById('poll-options-list');
+    if (container) appendPollOptionRow(container);
+}
+
+function removePollOptionRow(btn) {
+    const container = document.getElementById('poll-options-list');
+    if (!container) return;
+    if (container.querySelectorAll('.poll-option-row').length <= 1) {
+        alert('Нужен хотя бы один вариант ответа');
+        return;
+    }
+    btn.closest('.poll-option-row').remove();
 }
 
 function openPollEditMode(id) {
@@ -360,28 +379,31 @@ function openPollEditMode(id) {
     fetch(`/api/slide/${id}/`)
     .then(response => response.json())
     .then(data => {
+        const options = getPollOptionsList(data);
 
         editor.innerHTML = `
             <div class="mb-3">
-
-                <label class="form-label">
-                    Вопрос
-                </label>
-
-                <textarea
-                    id="slide-content"
-                    class="form-control"
-                    rows="3">${data.content || ''}</textarea>
-
+                <label class="form-label">Вопрос</label>
+                <textarea id="slide-content" class="form-control" rows="6"></textarea>
             </div>
 
-            <button
-                class="btn btn-success"
-                onclick="saveSlideContent(${id})">
+            <div class="mb-3">
+                <label class="form-label">Варианты ответа</label>
+                <div id="poll-options-list"></div>
+                <button type="button" class="btn btn-sm btn-outline-primary mt-1" onclick="addPollOptionRow()">+ Добавить вариант</button>
+            </div>
 
-                Сохранить
-            </button>
+            <div class="d-flex flex-wrap gap-2">
+                <button class="btn btn-success" onclick="savePollSlide(${id})">Сохранить</button>
+                <button class="btn btn-secondary" onclick="selectSlide(${id})">Отмена</button>
+                ${deleteSlideButtonHtml(id)}
+            </div>
+
+            <div id="slide-save-status" class="mt-3 text-muted"></div>
         `;
+        document.getElementById('slide-content').value = data.content || '';
+        const list = document.getElementById('poll-options-list');
+        options.forEach(opt => appendPollOptionRow(list, opt.text));
     });
 }
 
@@ -398,10 +420,7 @@ function openEditMode(id) {
 
                 <label class="form-label">Текст</label>
 
-                <textarea
-                    id="slide-content"
-                    class="form-control"
-                    rows="6">${data.content || ''}</textarea>
+                <textarea id="slide-content" class="form-control" rows="8"></textarea>
 
             </div>
 
@@ -428,24 +447,97 @@ function openEditMode(id) {
                 ''
             }
 
-            <button
-                class="btn btn-success"
-                onclick="saveSlideContent(${id})">
+            <div class="d-flex flex-wrap gap-2">
+                <button class="btn btn-success" onclick="saveSlideContent(${id})">Сохранить</button>
+                <button class="btn btn-secondary" onclick="selectSlide(${id})">Отмена</button>
+                ${deleteSlideButtonHtml(id)}
+            </div>
 
-                Сохранить
-            </button>
-
-            <button
-                class="btn btn-secondary ms-2"
-                onclick="selectSlide(${id})">
-
-                Отмена
-            </button>
-
-            <div id="slide-save-status"
-                 class="mt-3 text-muted"></div>
+            <div id="slide-save-status" class="mt-3 text-muted"></div>
         `;
+        document.getElementById('slide-content').value = data.content || '';
     });
+}
+
+function savePollSlide(slideId) {
+    const csrfToken = document.getElementById('csrf-token').value;
+    const content = document.getElementById('slide-content').value;
+    const options = Array.from(document.querySelectorAll('.poll-option-input'))
+        .map(input => input.value.trim())
+        .filter(text => text.length > 0);
+
+    const status = document.getElementById('slide-save-status');
+    if (options.length === 0) {
+        if (status) status.innerText = 'Добавьте хотя бы один вариант';
+        return;
+    }
+
+    fetch(`/api/slide/${slideId}/update-poll/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken
+        },
+        body: JSON.stringify({ content, options })
+    })
+    .then(parseApiResponse)
+    .then(({ ok, data }) => {
+        if (ok && data.success) {
+            if (status) status.innerText = 'Сохранено';
+            const slideElement = document.querySelector(
+                `[data-slide-id="${slideId}"] .preview-placeholder`
+            );
+            if (slideElement) {
+                slideElement.innerHTML = `
+                    <small class="text-muted d-block slide-multiline" style="overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;">
+                        ${escapeHtml(content)}
+                    </small>
+                `;
+            }
+            setTimeout(() => selectSlide(slideId), 300);
+        } else if (status) {
+            status.innerText = data.error || 'Ошибка сохранения';
+        }
+    })
+    .catch(() => {
+        if (status) status.innerText = 'Ошибка сети';
+    });
+}
+
+function deleteSlide(slideId, event = null) {
+    if (event) event.stopPropagation();
+    if (!confirm('Удалить этот слайд?')) return;
+
+    const csrfToken = document.getElementById('csrf-token').value;
+    fetch(`/api/slide/${slideId}/delete/`, {
+        method: 'POST',
+        headers: { 'X-CSRFToken': csrfToken }
+    })
+    .then(parseApiResponse)
+    .then(({ ok, data }) => {
+        if (!ok || !data.success) {
+            alert(data.error || 'Не удалось удалить слайд. Перезапустите сервер.');
+            return;
+        }
+        const thumb = document.querySelector(`[data-slide-id="${slideId}"]`);
+        if (thumb) thumb.remove();
+
+        const slides = document.querySelectorAll('.slide-thumbnail');
+        slides.forEach((slide, index) => {
+            const badge = slide.querySelector('.badge');
+            if (badge) badge.innerText = `# ${index + 1}`;
+        });
+
+        const editor = document.getElementById('slide-editor');
+        if (slides.length === 0) {
+            const container = document.getElementById('slides-list');
+            container.innerHTML = '<div id="no-slides-msg" class="text-center py-5 text-muted"><p>Слайдов пока нет</p></div>';
+            editor.innerHTML = '<h3 class="text-center mt-5 text-muted">Выберите или создайте слайд</h3>';
+        } else {
+            editor.innerHTML = '<h3 class="text-center mt-5 text-muted">Выберите или создайте слайд</h3>';
+        }
+    })
+    .catch(() => alert('Не удалось удалить слайд'));
 }
 
 function saveSlideContent(slideId) {
@@ -460,7 +552,7 @@ function saveSlideContent(slideId) {
 
     formData.append('content', content);
 
-    if (pictureInput.files.length > 0) {
+    if (pictureInput && pictureInput.files.length > 0) {
         formData.append('picture', pictureInput.files[0]);
     }
 
@@ -477,7 +569,7 @@ function saveSlideContent(slideId) {
         const status = document.getElementById('slide-save-status');
 
         if (data.success) {
-            status.innerText = 'Сохранено';
+            if (status) status.innerText = 'Сохранено';
             const slideElement = document.querySelector(
     `[data-slide-id="${slideId}"] .preview-placeholder`);
     if (slideElement) {
@@ -492,14 +584,9 @@ function saveSlideContent(slideId) {
     else {
 
         slideElement.innerHTML = `
-            <small class="text-muted d-block"
-                   style="
-                        overflow: hidden;
-                        display: -webkit-box;
-                        -webkit-line-clamp: 3;
-                        -webkit-box-orient: vertical;
-                   ">
-                ${content}
+            <small class="text-muted d-block slide-multiline"
+                   style="overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;">
+                ${escapeHtml(content)}
             </small>
         `;
     }
@@ -509,10 +596,12 @@ function saveSlideContent(slideId) {
     }, 300);
         }
         else {
-            status.innerText = 'Ошибка';
+            if (status) status.innerText = 'Ошибка';
         }
     })
     .catch(() => {
-        document.getElementById('slide-save-status').innerText = 'Ошибка';
+        const status = document.getElementById('slide-save-status');
+        if (status) status.innerText = 'Ошибка';
+        else alert('Не удалось сохранить. Обновите страницу (Ctrl+F5).');
     });
 }
