@@ -338,20 +338,34 @@ function renderPollPreview(id, data) {
     `;
 }
 
-function appendPollOptionRow(container, value = '') {
+function appendPollOptionRow(container, value = '', isCorrect = false) {
     const row = document.createElement('div');
     row.className = 'input-group mb-2 poll-option-row';
+
+    const radioWrapper = document.createElement('span');
+    radioWrapper.className = 'input-group-text d-flex align-items-center';
+    const radio = document.createElement('input');
+    radio.type = 'radio';
+    radio.name = 'correct-answer';
+    radio.className = 'form-check-input mt-0 poll-correct-radio';
+    radio.checked = isCorrect;
+    radio.title = 'Правильный ответ';
+    radioWrapper.appendChild(radio);
+
     const input = document.createElement('input');
     input.type = 'text';
     input.className = 'form-control poll-option-input';
     input.maxLength = 50;
     input.placeholder = 'Вариант ответа';
     input.value = value || '';
+
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.className = 'btn btn-outline-secondary';
     btn.textContent = '×';
     btn.addEventListener('click', () => removePollOptionRow(btn));
+
+    row.appendChild(radioWrapper);
     row.appendChild(input);
     row.appendChild(btn);
     container.appendChild(row);
@@ -359,7 +373,7 @@ function appendPollOptionRow(container, value = '') {
 
 function addPollOptionRow() {
     const container = document.getElementById('poll-options-list');
-    if (container) appendPollOptionRow(container);
+    if (container) appendPollOptionRow(container, '', false);
 }
 
 function removePollOptionRow(btn) {
@@ -393,6 +407,19 @@ function openPollEditMode(id) {
                 <button type="button" class="btn btn-sm btn-outline-primary mt-1" onclick="addPollOptionRow()">+ Добавить вариант</button>
             </div>
 
+            <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                    <label class="form-label">Время на ответ (сек)</label>
+                    <input id="poll-timer" type="number" min="0" step="15" class="form-control" placeholder="0">
+                </div>
+                <div class="col-md-6 d-flex align-items-end">
+                    <div class="form-check">
+                        <input id="allow-change-answer" class="form-check-input" type="checkbox">
+                        <label class="form-check-label" for="allow-change-answer">Разрешить изменить ответ</label>
+                    </div>
+                </div>
+            </div>
+
             <div class="d-flex flex-wrap gap-2">
                 <button class="btn btn-success" onclick="savePollSlide(${id})">Сохранить</button>
                 <button class="btn btn-secondary" onclick="selectSlide(${id})">Отмена</button>
@@ -402,8 +429,11 @@ function openPollEditMode(id) {
             <div id="slide-save-status" class="mt-3 text-muted"></div>
         `;
         document.getElementById('slide-content').value = data.content || '';
+        document.getElementById('poll-timer').value = data.timer || 0;
+        document.getElementById('allow-change-answer').checked = Boolean(data.allow_change_answer);
+
         const list = document.getElementById('poll-options-list');
-        options.forEach(opt => appendPollOptionRow(list, opt.text));
+        options.forEach(opt => appendPollOptionRow(list, opt.text, Boolean(opt.is_correct)));
     });
 }
 
@@ -462,9 +492,18 @@ function openEditMode(id) {
 function savePollSlide(slideId) {
     const csrfToken = document.getElementById('csrf-token').value;
     const content = document.getElementById('slide-content').value;
-    const options = Array.from(document.querySelectorAll('.poll-option-input'))
-        .map(input => input.value.trim())
-        .filter(text => text.length > 0);
+    const options = Array.from(document.querySelectorAll('.poll-option-row'))
+        .map(row => {
+            const textInput = row.querySelector('.poll-option-input');
+            const radio = row.querySelector('.poll-correct-radio');
+            return {
+                text: textInput ? textInput.value.trim() : '',
+                isCorrect: radio ? radio.checked : false,
+            };
+        })
+        .filter(option => option.text.length > 0);
+    const timerValue = Number(document.getElementById('poll-timer').value || 0);
+    const allowChangeAnswer = document.getElementById('allow-change-answer').checked;
 
     const status = document.getElementById('slide-save-status');
     if (options.length === 0) {
@@ -478,7 +517,7 @@ function savePollSlide(slideId) {
             'Content-Type': 'application/json',
             'X-CSRFToken': csrfToken
         },
-        body: JSON.stringify({ content, options })
+        body: JSON.stringify({ content, options, timer: timerValue, allowChangeAnswer })
     })
     .then(parseApiResponse)
     .then(({ ok, data }) => {

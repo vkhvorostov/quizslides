@@ -1,3 +1,5 @@
+from django.utils import timezone
+
 from .models import AnswerOption, Member, PollVote, Presentation, Session, Slide
 
 
@@ -33,8 +35,19 @@ def poll_results_for_slide(slide):
             'text': opt.text,
             'count': count,
             'percent': percent,
+            'is_correct': opt.is_correct,
         })
     return {'options': results, 'total_voters': total_voters}
+
+
+def get_poll_time_left(session, slide):
+    if not slide or not slide.timer or slide.timer <= 0:
+        return None
+    if not session.current_slide_started_at:
+        return slide.timer
+    elapsed = (timezone.now() - session.current_slide_started_at).total_seconds()
+    remaining = slide.timer - int(elapsed)
+    return max(0, remaining)
 
 
 def build_session_state(session, member=None):
@@ -50,13 +63,19 @@ def build_session_state(session, member=None):
         'total_slides': len(slides),
         'slide_type': slide.slide_type if slide else 'CONTENT',
         'question': slide.content if slide else '',
-        'options': _poll_options_payload(slide) if slide and slide.slide_type == 'POLL' else [],
+        'options': _poll_options_payload(slide, include_correct=False) if slide and slide.slide_type == 'POLL' else [],
         'results': None,
         'my_vote_option_id': None,
+        'timer': 0,
+        'remaining_seconds': 0,
+        'allow_change_answer': False,
     }
 
     if slide and slide.slide_type == 'POLL':
         payload['results'] = poll_results_for_slide(slide)
+        payload['timer'] = slide.timer or 0
+        payload['remaining_seconds'] = get_poll_time_left(session, slide) or 0
+        payload['allow_change_answer'] = slide.allow_change_answer
         if member:
             vote = PollVote.objects.filter(
                 id_slide=slide, id_member=member
@@ -67,14 +86,17 @@ def build_session_state(session, member=None):
     return payload
 
 
-def _poll_options_payload(slide):
+def _poll_options_payload(slide, include_correct=False):
     widget = slide.widgets.first()
     if not widget:
         return []
-    return [
-        {'id': opt.id_answer_option, 'number': opt.number, 'text': opt.text}
-        for opt in widget.answer_options.order_by('number')
-    ]
+    payload = []
+    for opt in widget.answer_options.order_by('number'):
+        item = {'id': opt.id_answer_option, 'number': opt.number, 'text': opt.text}
+        if include_correct:
+            item['is_correct'] = opt.is_correct
+        payload.append(item)
+    return payload
 
 
 def get_member_from_request(request, session):

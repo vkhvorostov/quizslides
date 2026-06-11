@@ -1,6 +1,7 @@
 const PRESENTATION_ID = document.getElementById('presentation-id').value;
 const RESULTS_EL = document.getElementById('poll-results-live');
 const TOTAL_EL = document.getElementById('poll-total-voters');
+const TIMER_EL = document.getElementById('poll-timer-display');
 let chartType = 'bar';
 const COLORS = ['#198754', '#0d6efd', '#fd7e14', '#dc3545', '#6f42c1', '#20c997'];
 
@@ -33,13 +34,18 @@ function renderResults(results) {
         return;
     }
 
+    const optionLabel = o => `
+        ${escapeHtml(o.text)}
+        ${o.is_correct ? '<span class="badge bg-success ms-2">✔</span>' : ''}
+    `;
+
     if (chartType === 'pie') {
         RESULTS_EL.innerHTML = `
             <div class="poll-pie mb-4" style="background:${buildPieGradient(opts)}"></div>
             <div class="d-flex flex-wrap justify-content-center gap-3">
                 ${opts.map((o, i) => `
                     <span><span style="display:inline-block;width:12px;height:12px;background:${COLORS[i % COLORS.length]};border-radius:2px;"></span>
-                    ${escapeHtml(o.text)} — <strong>${o.count}</strong> (${o.percent}%)</span>
+                    ${escapeHtml(o.text)} ${o.is_correct ? '<span class="badge bg-success ms-1">✔</span>' : ''} — <strong>${o.count}</strong> (${o.percent}%)</span>
                 `).join('')}
             </div>
         `;
@@ -54,7 +60,7 @@ function renderResults(results) {
                         <div class="poll-bar-track d-flex align-items-end" style="height:120px;width:48px;margin:0 auto;">
                             <div class="poll-bar-fill w-100" style="height:${Math.max(o.percent, 5)}%;background:${COLORS[i % COLORS.length]}"></div>
                         </div>
-                        <div class="small fw-semibold mt-2">${escapeHtml(o.text)}</div>
+                        <div class="small fw-semibold mt-2">${escapeHtml(o.text)} ${o.is_correct ? '<span class="badge bg-success ms-1">✔</span>' : ''}</div>
                         <div class="text-muted small">${o.count}</div>
                     </div>
                 `).join('')}
@@ -66,7 +72,7 @@ function renderResults(results) {
     RESULTS_EL.innerHTML = opts.map((o, i) => `
         <div class="mb-3">
             <div class="d-flex justify-content-between small mb-1">
-                <span>${escapeHtml(o.text)}</span>
+                <span>${escapeHtml(o.text)} ${o.is_correct ? '<span class="badge bg-success ms-1">✔</span>' : ''}</span>
                 <span><strong>${o.count}</strong> (${o.percent}%)</span>
             </div>
             <div class="poll-bar-track">
@@ -92,6 +98,13 @@ function refreshPoll() {
         if (data.success && data.results) {
             window._lastPollResults = data.results;
             renderResults(data.results);
+            if (TIMER_EL) {
+                if (data.timer > 0) {
+                    TIMER_EL.textContent = `Осталось: ${data.remaining_seconds} сек`;
+                } else {
+                    TIMER_EL.textContent = 'Таймер не задан';
+                }
+            }
         }
     })
     .catch(() => {});

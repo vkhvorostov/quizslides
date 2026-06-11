@@ -16,9 +16,10 @@ class Session(models.Model):
     status = models.BooleanField(default=False)
     time_begin = models.DateTimeField(auto_now_add=True)
     time_end = models.DateTimeField()
+    current_slide_number = models.IntegerField(default=1)
+    current_slide_started_at = models.DateTimeField(null=True, blank=True)
     max_count_people = models.IntegerField()
     code = models.CharField(max_length=10)
-    current_slide_number = models.IntegerField(default=1)
     id_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True,
                                 related_name='sessions')
 
@@ -77,6 +78,18 @@ class Slide(models.Model):
         default=''
     )
 
+    timer = models.IntegerField(
+        null=True,
+        blank=True,
+        default=None,
+        help_text='Время на ответ в секундах'
+    )
+
+    allow_change_answer = models.BooleanField(
+        default=False,
+        help_text='Разрешить изменить ответ до окончания таймера'
+    )
+
     id_presentation = models.ForeignKey(
         Presentation,
         on_delete=models.CASCADE,
@@ -105,6 +118,7 @@ class AnswerOption(models.Model):
     id_answer_option = models.AutoField(primary_key=True)
     number = models.IntegerField()
     text = models.CharField(max_length=50)
+    is_correct = models.BooleanField(default=False)
     id_widget = models.ForeignKey(Widget, on_delete=models.CASCADE,
                                   related_name='answer_options')
 

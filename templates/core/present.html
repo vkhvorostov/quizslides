@@ -9,6 +9,15 @@
     .poll-bar-fill { height: 100%; background: linear-gradient(90deg, #198754, #20c997); transition: width 0.4s ease; }
     .poll-pie { width: 220px; height: 220px; border-radius: 50%; margin: 0 auto; }
     .chart-toggle .active { font-weight: 600; }
+    /* Ensure the poll title is strictly centered for presenter (admin) view */
+    #poll-question {
+        width: 100%;
+        text-align: center !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
 </style>
 
 <div class="d-flex flex-column vh-100">
@@ -36,20 +45,27 @@
             {% endif %}
 
             {% if current_slide.slide_type == 'POLL' %}
-            <h2 id="poll-question" class="text-center mb-3 slide-multiline" style="white-space: pre-wrap;">
-                {% if current_slide.content %}{{ current_slide.content }}{% else %}{% trans "Опрос" %}{% endif %}
-            </h2>
-            <p class="text-center text-muted mb-3">
-                {% trans "Проголосовало" %}: <strong id="poll-total-voters">{{ poll_results.total_voters|default:0 }}</strong>
-                {% trans "участник(ов)" %}
-            </p>
-            <div class="text-center mb-3 chart-toggle btn-group" role="group">
-                <button type="button" class="btn btn-sm btn-outline-secondary active" data-chart="bar">{% trans "Столбцы" %}</button>
-                <button type="button" class="btn btn-sm btn-outline-secondary" data-chart="horizontal">{% trans "Полосы" %}</button>
-                <button type="button" class="btn btn-sm btn-outline-secondary" data-chart="pie">{% trans "Круг" %}</button>
+            <div class="d-flex flex-column align-items-center w-100">
+                <h2 id="poll-question" class="mb-3 slide-multiline w-100" style="white-space: pre-wrap; text-align: center;">{% if current_slide.content %}{{ current_slide.content }}{% else %}{% trans "Опрос" %}{% endif %}</h2>
+                <p class="text-muted mb-3 text-center">
+                    {% trans "Проголосовало" %}: <strong id="poll-total-voters">{{ poll_results.total_voters|default:0 }}</strong>
+                    {% trans "участник(ов)" %}
+                </p>
+
+                <div class="mb-3">
+                    <span class="badge bg-info text-dark" id="poll-timer-display">{% trans "Таймер не задан" %}</span>
+                </div>
+
+                <div class="mb-3 chart-toggle btn-group" role="group">
+                    <button type="button" class="btn btn-sm btn-outline-secondary active" data-chart="bar">{% trans "Столбцы" %}</button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" data-chart="horizontal">{% trans "Полосы" %}</button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" data-chart="pie">{% trans "Круг" %}</button>
+                </div>
+
+                <div id="poll-results-live" style="width:100%;"></div>
+
+                <p class="text-center text-muted small mt-3">{% trans "Голосуют только зрители по коду. Вы — организатор." %}</p>
             </div>
-            <div id="poll-results-live"></div>
-            <p class="text-center text-muted small mt-3">{% trans "Голосуют только зрители по коду. Вы — организатор." %}</p>
             {% else %}
             <div class="fs-4 slide-multiline" style="white-space: pre-wrap;">
                 {% if current_slide.content %}{{ current_slide.content }}{% else %}{% trans "Пустой слайд" %}{% endif %}
@@ -75,6 +91,8 @@
 
 {% if current_slide.slide_type == 'POLL' %}
 <input type="hidden" id="presentation-id" value="{{ presentation.id_presentation }}">
+<input type="hidden" id="poll-timer" value="{{ current_slide.timer|default:0 }}">
+<input type="hidden" id="poll-options-data" value='{{ poll_options|json_script:"initial-poll-options" }}'>
 {% if poll_results %}{{ poll_results|json_script:"initial-poll-results" }}{% endif %}
 <script src="{% static 'js/present-live.js' %}?v=1"></script>
 {% endif %}
