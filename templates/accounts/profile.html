@@ -1,17 +1,136 @@
+{% extends 'base.html' %}
 {% load i18n %}
-<!DOCTYPE html>
- 
-<html lang="{{ request.LANGUAGE_CODE }}">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% trans "Login Successful" %}</title>
-</head>
-<body>
-    <p>{% blocktrans %}You are logged in as {{ username }}{% endblocktrans %}</p>
-    <form action="{% url 'accounts:logout' %}" method="post">
-        {% csrf_token %}
-        <button type="submit">{% trans "Logout" %}</button>
-    </form>
-</body>
-</html>
+
+{% block title %}{% trans "Profile" %} | QuizSlides{% endblock %}
+
+{% block content %}
+<div style="background-color: #FFFFFF; min-height: 100vh;">
+
+    <!-- Шапка профиля -->
+    <div style="width: 100%; max-width: 1381px; height: 213px; margin: 13px auto 0; background-color: #D3E5FF; border-radius: 12px; padding: 21px 44px; display: flex; align-items: center; gap: 30px; position: relative;">
+        
+        <!-- Аватар -->
+        <div style="width: 100px; height: 100px; background-color: #198754; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 2.5rem; font-weight: 800; flex-shrink: 0;">
+            {{ user.username|first|upper }}
+        </div>
+        
+        <!-- Имя и статистика -->
+        <div style="flex-grow: 1;">
+            <h1 style="font-size: 2.5rem; font-weight: 800; margin: 0 0 8px 0; color: #000;">{{ user.username }}</h1>
+            <div style="display: flex; gap: 24px; color: #666; font-size: 1rem;">
+                <span><strong style="color: #000;">12</strong> {% trans "presentations" %}</span>
+                <span><strong style="color: #000;">5</strong> {% trans "sessions" %}</span>
+                <span><strong style="color: #000;">234</strong> {% trans "participants" %}</span>
+            </div>
+        </div>
+
+        <!-- Кнопка Редактировать профиль -->
+        <button style="
+            position: absolute; 
+            top: 21px; 
+            right: 24px;
+            background: white; 
+            border: 1px solid #DDD; 
+            padding: 10px 20px; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-weight: 600; 
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #333;
+        ">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+            </svg>
+            {% trans "Edit" %}
+        </button>
+    </div>
+
+    <!-- Кнопки действий -->
+    <div style="max-width: 1381px; margin: 24px auto 0; padding: 0 0 0 44px; display: flex; gap: 12px;">
+        <button style="background-color: #198754; color: white; border: none; padding: 14px 24px; border-radius: 8px; font-weight: 600; font-size: 1rem; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 5v14M5 12h14"></path>
+            </svg>
+            {% trans "Create presentation" %}
+        </button>
+        <button style="background-color: transparent; color: #333; border: 1px solid #DDD; padding: 14px 24px; border-radius: 8px; font-weight: 600; font-size: 1rem; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" y1="3" x2="12" y2="15"></line>
+            </svg>
+            {% trans "Upload" %}
+        </button>
+        <button style="background-color: transparent; color: #333; border: 1px solid #DDD; padding: 14px 24px; border-radius: 8px; font-weight: 600; font-size: 1rem; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="18" cy="5" r="3"></circle>
+                <circle cx="6" cy="12" r="3"></circle>
+                <circle cx="18" cy="19" r="3"></circle>
+                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+            </svg>
+            {% trans "Share" %}
+        </button>
+    </div>
+
+    <!-- Разделитель -->
+    <div style="max-width: 1440px; margin: 32px auto; height: 1px; background-color: #EFEFEF;"></div>
+
+    <!-- Заголовок и сортировка -->
+    <div style="max-width: 1381px; margin: 0 auto; padding: 0 44px; display: flex; justify-content: space-between; align-items: center;">
+        <h5 style="font-weight: 700; font-size: 1.2rem; margin: 0;">{% trans "My presentations" %}</h5>
+        <select style="width: 370px; height: 42px; border: 1px solid #DDDDDD; border-radius: 6px; padding: 0 12px; font-size: 0.95rem; color: #333; background: white;">
+            <option>{% trans "Newest first" %}</option>
+            <option>{% trans "Oldest first" %}</option>
+            <option>{% trans "By name" %}</option>
+        </select>
+    </div>
+
+    <!-- Список презентаций -->
+    <div style="max-width: 1381px; margin: 20px auto 0; padding: 0 44px; display: flex; flex-direction: column; gap: 16px;">
+        
+        <!-- Карточка 1 -->
+        <div style="width: 100%; height: 203px; background-color: white; border: 1px solid #DDDDDD; border-radius: 12px; padding: 25px; display: flex; align-items: center; gap: 30px;">
+            <div style="width: 393px; height: 153px; background: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; border: 1px solid #EEE;">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="1.5">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                    <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                    <polyline points="21 15 16 10 5 21"></polyline>
+                </svg>
+            </div>
+            <div style="flex-grow: 1;">
+                <h5 style="font-weight: 700; margin: 0 0 8px 0; font-size: 1.25rem;">{% trans "Presentation title" %}</h5>
+                <p style="color: #666; margin: 0 0 4px 0; font-size: 0.9rem;">{% trans "Created" %}: 12.05.2026 • 14 {% trans "slides" %}</p>
+                <p style="margin: 0; font-size: 0.9rem;">{% trans "Status" %}: <span style="color: #198754; font-weight: 600;">{% trans "Active" %}</span></p>
+            </div>
+            <button style="background: white; border: 1px solid #DDD; padding: 8px 20px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.9rem;">
+                {% trans "Edit" %}
+            </button>
+        </div>
+
+        <!-- Карточка 2 -->
+        <div style="width: 100%; height: 203px; background-color: white; border: 1px solid #DDDDDD; border-radius: 12px; padding: 25px; display: flex; align-items: center; gap: 30px;">
+            <div style="width: 393px; height: 153px; background: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; border: 1px solid #EEE;">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="1.5">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                    <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                    <polyline points="21 15 16 10 5 21"></polyline>
+                </svg>
+            </div>
+            <div style="flex-grow: 1;">
+                <h5 style="font-weight: 700; margin: 0 0 8px 0; font-size: 1.25rem;">{% trans "Programming lecture" %}</h5>
+                <p style="color: #666; margin: 0 0 4px 0; font-size: 0.9rem;">{% trans "Created" %}: 10.05.2026 • 24 {% trans "slides" %}</p>
+                <p style="margin: 0; font-size: 0.9rem;">{% trans "Status" %}: <span style="color: #999; font-weight: 600;">{% trans "Completed" %}</span></p>
+            </div>
+            <button style="background: white; border: 1px solid #DDD; padding: 8px 20px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.9rem;">
+                {% trans "Edit" %}
+            </button>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

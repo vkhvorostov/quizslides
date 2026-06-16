@@ -20,5 +20,5 @@ def signup_view(request):
 
 @login_required
 def profile_view(request):
-    """Профиль: перенаправление на главную (создание презентаций там)."""
-    return redirect('index')
+    """Профиль пользователя со списком презентаций."""
+    return render(request, 'accounts/profile.html')

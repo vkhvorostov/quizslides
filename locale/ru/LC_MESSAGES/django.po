@@ -154,8 +154,6 @@ msgid "AI slide generation (Soon)"
 msgstr "AI генерация слайдов (Скоро)"
 
 #: templates/index.html:123
-msgid "Presentation title"
-msgstr "Название презентации"
 
 #: templates/index.html:127
 msgid "Create"
@@ -225,3 +223,55 @@ msgstr "Вариант B"
 
 msgid "Add Option"
 msgstr "Добавить вариант"
+
+#: templates/accounts/profile.html
+
+msgid "Profile"
+msgstr "Профиль"
+
+msgid "presentations"
+msgstr "презентаций"
+
+msgid "sessions"
+msgstr "сессий"
+
+msgid "participants"
+msgstr "участников"
+
+msgid "Edit"
+msgstr "Редактировать"
+
+msgid "Upload"
+msgstr "Загрузить"
+
+msgid "Share"
+msgstr "Поделиться"
+
+msgid "My presentations"
+msgstr "Мои презентации"
+
+msgid "Newest first"
+msgstr "Сначала новые"
+
+msgid "Oldest first"
+msgstr "Сначала старые"
+
+msgid "By name"
+msgstr "По названию"
+
+msgid "Created"
+msgstr "Создано"
+
+msgid "slides"
+msgstr "слайдов"
+
+msgid "Status"
+msgstr "Статус"
+
+msgid "Completed"
+msgstr "Завершена"
+
+#: templates/includes/footer.html
+
+msgid "All rights reserved"
+msgstr "Все права защищены"
