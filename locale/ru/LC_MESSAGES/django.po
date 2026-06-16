@@ -6,7 +6,7 @@ msgstr ""
 "PO-Revision-Date: \n"
 "Last-Translator: Anton"
 "Language-Team: \n"
-"Language: en\n"
+"Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -84,6 +84,10 @@ msgstr "Добавить слайд"
 #: templates/core/editor.html:84
 msgid "Active"
 msgstr "Активный"
+
+#: templates/core/editor.html:95
+msgid "Delete slide"
+msgstr "Удалить слайд"
 
 #: templates/core/editor.html:96
 msgid "Empty slide"
@@ -275,3 +279,64 @@ msgstr "Завершена"
 
 msgid "All rights reserved"
 msgstr "Все права защищены"
+
+#: templates/core/participant.html:4
+msgid "Participant"
+msgstr "Участник"
+
+#: templates/core/participant.html:9
+msgid "Session code"
+msgstr "Код сессии"
+
+#: templates/core/participant.html:15
+msgid "Loading..."
+msgstr "Загрузка..."
+
+#: templates/core/present.html:4
+msgid "Presentation mode"
+msgstr "Показ"
+
+#: templates/core/present.html:18
+msgid "Editor"
+msgstr "Редактор"
+
+#: templates/core/present.html:24
+msgid "Audience code"
+msgstr "Код для зрителей"
+
+#: templates/core/present.html:40
+msgid "Poll"
+msgstr "Опрос"
+
+#: templates/core/present.html:43
+msgid "Voted"
+msgstr "Проголосовало"
+
+#: templates/core/present.html:44
+msgid "participants"
+msgstr "участник(ов)"
+
+#: templates/core/present.html:47
+msgid "Columns"
+msgstr "Столбцы"
+
+#: templates/core/present.html:48
+msgid "Bars"
+msgstr "Полосы"
+
+#: templates/core/present.html:49
+msgid "Pie"
+msgstr "Круг"
+
+#: templates/core/present.html:52
+msgid "Only viewers with the code can vote. You are the organizer."
+msgstr "Голосуют только зрители по коду. Вы — организатор."
+
+#: templates/core/present.html:66
+msgid "Slide"
+msgstr "Слайд"
+
+#: templates/core/present.html:68
+#: templates/core/present.html:70
+msgid "Next"
+msgstr "Вперёд"
