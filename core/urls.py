@@ -12,6 +12,7 @@ urlpatterns = [
     path('editor/<int:presentation_id>/', views.editor_view, name='editor'),
     path('presentation/<int:presentation_id>/start/', views.start_presentation, name='start_presentation'),
     path('presentation/<int:presentation_id>/present/', views.present_view, name='present'),
+    path('presentation/<int:presentation_id>/', views.present_presentation, name='present_presentation'),
     path(
         'api/presentation/<int:presentation_id>/poll-results/',
         views.presentation_poll_results,

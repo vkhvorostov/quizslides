@@ -55,6 +55,10 @@ class TestProfileView:
         client = Client()
         client.force_login(user)
         response = client.get(reverse('accounts:profile'))
-        assert response.status_code == 200
-        assert 'username' in response.context
-        assert response.context['username'] == user.username
+
+        # Редирект на главную страницу
+        assert response.status_code == 302
+        assert response.url == reverse('index')
+
+        response_follow = client.get(reverse('accounts:profile'), follow=True)
+        assert response_follow.status_code == 200

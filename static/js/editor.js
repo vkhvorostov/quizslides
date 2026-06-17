@@ -358,7 +358,6 @@ function appendPollOptionRow(container, value = '', isCorrect = false) {
     input.maxLength = 50;
     input.placeholder = 'Вариант ответа';
     input.value = value || '';
-
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.className = 'btn btn-outline-secondary';
@@ -543,7 +542,8 @@ function savePollSlide(slideId) {
     });
 }
 
-function deleteSlide(slideId) {
+function deleteSlide(slideId, event = null) {
+    if (event) event.stopPropagation();
     if (!confirm('Удалить этот слайд?')) return;
 
     const csrfToken = document.getElementById('csrf-token').value;

@@ -169,9 +169,16 @@ class TestAddSlideView:
 
     def test_add_slide_valid(self, user, presentation):
         from django.test import Client
+
         client = Client()
         client.force_login(user)
-        response = client.post(reverse('core:add_slide', args=[presentation.id_presentation]))
+
+        response = client.post(
+            reverse('core:add_slide', args=[presentation.id_presentation]),
+            data=json.dumps({'type': 'CONTENT'}),
+            content_type='application/json'
+        )
+
         assert response.status_code == 200
         data = json.loads(response.content)
         assert data['success'] is True
@@ -183,12 +190,22 @@ class TestAddSlideView:
         from django.test import Client
         client = Client()
         client.force_login(user)
+
         # Первый слайд
-        response = client.post(reverse('core:add_slide', args=[presentation.id_presentation]))
+        response = client.post(
+            reverse('core:add_slide', args=[presentation.id_presentation]),
+            data=json.dumps({'type': 'CONTENT'}),
+            content_type='application/json'
+        )
         data = json.loads(response.content)
         first_number = data['number']
+
         # Второй слайд
-        response = client.post(reverse('core:add_slide', args=[presentation.id_presentation]))
+        response = client.post(
+            reverse('core:add_slide', args=[presentation.id_presentation]),
+            data=json.dumps({'type': 'POLL'}),
+            content_type='application/json'
+        )
         data = json.loads(response.content)
         assert data['number'] == first_number + 1
         assert Slide.objects.filter(id_presentation=presentation).count() == 2

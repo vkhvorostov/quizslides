@@ -1,9 +1,8 @@
 {% load django_bootstrap5 %}
 {% load static %}
 {% load i18n %}
-{% get_current_language as LANGUAGE_CODE %}
 <!DOCTYPE html>
-<html lang="{{ LANGUAGE_CODE }}">
+<html lang="{{ request.LANGUAGE_CODE }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -24,7 +23,7 @@
         {% for message in messages %}
         <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
             {{ message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{% trans 'Закрыть' %}"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{% trans 'Close' %}"></button>
         </div>
         {% endfor %}
     </div>
@@ -34,6 +33,8 @@
         {% block content %}
         {% endblock %}
     </main>
+
+    {% include 'includes/footer.html' %}
 
     {% bootstrap_javascript %}
 

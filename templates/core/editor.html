@@ -46,7 +46,7 @@
     <!-- Шапка (Header) -->
     <header class="bg-white border-bottom py-2 px-4 d-flex justify-content-between align-items-center">
         <div class="d-flex align-items-center gap-3">
-            <a href="{% url 'index' %}" class="btn btn-outline-secondary btn-sm">&larr; {% trans "Назад" %}</a>
+            <a href="{% url 'index' %}" class="btn btn-outline-secondary btn-sm">&larr; {% trans "Back" %}</a>
             <!-- Инлайновое редактирование названия -->
             <h4 class="mb-0 text-truncate" 
                 id="presentation-title" 
@@ -54,7 +54,7 @@
                 style="cursor: text; max-width: 400px; outline: none; padding: 2px 5px; border-radius: 4px;">
                 {{ presentation.name }}
             </h4>
-            <small id="save-status" class="text-muted" style="display: none;">{% trans "Сохранено" %}</small>
+            <small id="save-status" class="text-muted" style="display: none;">{% trans "Saved" %}</small>
         </div>
         <form method="post" action="{% url 'core:start_presentation' presentation.id_presentation %}" class="d-inline">
             {% csrf_token %}
@@ -70,7 +70,7 @@
             <div class="p-3 border-bottom">
                 <div class="dropdown">
                     <button class="btn btn-primary w-100 dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                        + {% trans "Добавить слайд" %}
+                        + {% trans "Add Slide" %}
                     </button>
                     <ul class="dropdown-menu w-100">
                         <li><a class="dropdown-item" href="#" onclick="addSlide('CONTENT', event)">Контент</a></li>
@@ -92,8 +92,8 @@
                             <div class="d-flex align-items-center gap-1">
                                 {% if slide.status %}<span class="text-success" style="font-size: 10px;">● {% trans "Active" %}</span>{% endif %}
                                 <button type="button" class="btn btn-sm btn-link text-danger p-0 lh-1"
-                                        title="{% trans 'Удалить слайд' %}"
-                                        onclick="event.stopPropagation(); deleteSlide('{{ slide.id_slide }}')">&times;</button>
+                                        title="{% trans 'Delete slide' %}"
+                                        onclick="deleteSlide({{ slide.id_slide }}, event)">&times;</button>
                             </div>
                         </div>
                         <div class="preview-placeholder bg-light border rounded p-2 overflow-hidden" style="height: 80px;">
@@ -106,7 +106,7 @@
                             {% else %}
                             <div class="h-100 d-flex align-items-center justify-content-center">
                                 <small class="text-muted">
-                                    Пустой слайд
+                                    {% trans "Empty slide" %}
                                 </small>
                             </div>
                             {% endif %}
@@ -115,7 +115,7 @@
                 </div>
                 {% empty %}
                 <div id="no-slides-msg" class="text-center py-5 text-muted">
-                    <p>{% trans "Слайдов пока нет" %}</p>
+                    <p>{% trans "No slides yet" %}</p>
                 </div>
                 {% endfor %}
             </div>
@@ -124,7 +124,7 @@
         <!-- Рабочая область (Canvas) -->
         <main class="flex-grow-1 bg-secondary bg-opacity-10 p-4 d-flex justify-content-center align-items-center">
             <div id="slide-editor" class="bg-white shadow-sm border rounded p-4" style="width: 800px; height: 450px; overflow:auto;">
-                <h3 class="text-center mt-5 text-muted">Выберите или создайте слайд</h3>
+                <h3 class="text-center mt-5 text-muted">{% trans "Select or create a slide" %}</h3>
             </div>
         </main>
     </div>

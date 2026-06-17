@@ -93,7 +93,6 @@ function castVote(optionId) {
     .then(r => r.json())
     .then(data => {
         if (data.success) {
-            // server returns updated state; refresh
             refreshState();
         } else {
             alert(data.error || 'Не удалось проголосовать');

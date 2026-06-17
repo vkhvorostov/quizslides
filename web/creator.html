@@ -3,7 +3,7 @@
 <head>
     <meta charset="windows-1251">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Интерактивное голосование · конструктор слайдов</title>
+    <title>{% trans "Interactive Poll В· View" %}</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * {
@@ -308,36 +308,36 @@
     <div class="poll-studio">
         <div class="studio-header">
             <div class="slide-tab">
-                <span class="active">Слайд 1</span>
-                <span>Слайд 2</span>
-                <span>Слайд 3</span>
-                <span><i class="fa-regular fa-plus" style="margin-right: 4px;"></i> добавить</span>
+                <span class="active">{% trans "Slide 1" %}</span>
+                <span>{% trans "Slide 2" %}</span>
+                <span>{% trans "Slide 3" %}</span>
+                <span><i class="fa-regular fa-plus" style="margin-right: 4px;"></i> {% trans "Add" %}</span>
             </div>
         </div>
         <div class="editor-panel">
-            <div class="slide-title">Новый слайд</div>
+            <div class="slide-title">{% trans "New slide" %}</div>
             <div class="slide-meta">
-                <i class="fa-regular fa-pen-to-square"></i> редактирование
+                <i class="fa-regular fa-pen-to-square"></i> {% trans "Editing" %}
                 <span class="separator-dot"></span>
-                <span>видимость: все участники</span>
+                <span>{% trans "Visibility: All participants" %}</span>
             </div>
             <div class="reset-btn">
-                <i class="fa-regular fa-rotate-right"></i> Сброс результатов
+                <i class="fa-regular fa-rotate-right"></i> {% trans "Reset Results" %}
             </div>
             <div class="question-block">
-                <input class="question-input" type="text" value="Тема голосования" placeholder="Ваш вопрос">
+                <input class="question-input" type="text" value="{% trans "Poll Topic" %}" placeholder="{% trans "Your Question" %}">
                 <div class="options-list">
                     <div class="option-row">
                         <i class="fa-regular fa-circle"></i>
-                        <input class="option-text" type="text" value="Вариант 1" placeholder="Вариант A">
+                        <input class="option-text" type="text" value="{% trans "Option 1" %}" placeholder="{% trans "Option A" %}">
                     </div>
                     <div class="option-row">
                         <i class="fa-regular fa-circle"></i>
-                        <input class="option-text" type="text" value="Вариант 2" placeholder="Вариант B">
+                        <input class="option-text" type="text" value="{% trans "Option 2" %}" placeholder="{% trans "Option B" %}">
                     </div>
                 </div>
                 <div class="add-option">
-                    <i class="fa-regular fa-square-plus"></i> Добавить вариант
+                    <i class="fa-regular fa-square-plus"></i> {% trans "Add Option" %}
                 </div>
             </div>
             <div class="action-bar">

@@ -20,6 +20,7 @@ class Session(models.Model):
     current_slide_started_at = models.DateTimeField(null=True, blank=True)
     max_count_people = models.IntegerField()
     code = models.CharField(max_length=10)
+    current_slide_number = models.IntegerField(default=1)
     id_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True,
                                 related_name='sessions')
 

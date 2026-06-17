@@ -8,6 +8,8 @@ from django.db import transaction
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
+from django.utils.crypto import get_random_string
+from django.views.decorators.http import require_POST
 
 from .models import AnswerOption, Member, PollVote, Presentation, Session, Slide, Widget
 from .poll_live import (
@@ -18,6 +20,9 @@ from .poll_live import (
     get_poll_time_left,
     poll_results_for_slide,
 )
+
+
+SESSION_CODE_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
 
 
 def _ensure_poll_widget(slide):
@@ -51,6 +56,20 @@ def _generate_session_code():
         if not Session.objects.filter(code=code, status=True).exists():
             return code
     raise RuntimeError('Не удалось сгенерировать код сессии')
+    while True:
+        code = get_random_string(6, allowed_chars=SESSION_CODE_ALPHABET)
+        if not Session.objects.filter(code=code, status=True).exists():
+            return code
+
+
+def _create_active_session(user):
+    return Session.objects.create(
+        status=True,
+        time_end=timezone.now() + timedelta(hours=4),
+        max_count_people=100,
+        code=_generate_session_code(),
+        id_user=user,
+    )
 
 
 @login_required
@@ -128,6 +147,45 @@ def present_view(request, presentation_id):
         return redirect('core:editor', presentation_id=presentation_id)
     if not presentation.id_session_id:
         return redirect('core:editor', presentation_id=presentation_id)
+@require_POST
+def start_presentation(request, presentation_id):
+    presentation = get_object_or_404(
+        Presentation,
+        id_presentation=presentation_id,
+        id_user=request.user,
+    )
+
+    if not presentation.slides.exists():
+        messages.error(request, 'Добавьте хотя бы один слайд перед запуском')
+        return redirect('core:editor', presentation_id=presentation.id_presentation)
+
+    session = presentation.id_session
+    if session is None or not session.status:
+        session = _create_active_session(request.user)
+
+    presentation.id_session = session
+    presentation.status = True
+    presentation.save(update_fields=['id_session', 'status'])
+
+    return redirect('core:present_presentation', presentation_id=presentation.id_presentation)
+
+
+@login_required
+def present_presentation(request, presentation_id):
+    presentation = get_object_or_404(
+        Presentation,
+        id_presentation=presentation_id,
+        id_user=request.user,
+    )
+
+    if not presentation.status or presentation.id_session is None or not presentation.id_session.status:
+        messages.info(request, 'Сначала запустите презентацию')
+        return redirect('core:editor', presentation_id=presentation.id_presentation)
+
+    slides = list(presentation.slides.order_by('number'))
+    if not slides:
+        messages.error(request, 'Добавьте хотя бы один слайд перед запуском')
+        return redirect('core:editor', presentation_id=presentation.id_presentation)
 
     try:
         current_index = int(request.GET.get('slide', 1))
@@ -148,6 +206,15 @@ def present_view(request, presentation_id):
         _ensure_poll_widget(current_slide)
         poll_results = poll_results_for_slide(current_slide)
         poll_options = _poll_options_payload(current_slide)
+    if session.current_slide_number != current_index:
+        session.current_slide_number = current_index
+        session.save(update_fields=['current_slide_number'])
+
+    current_slide = slides[current_index - 1]
+    poll_results = None
+    if current_slide.slide_type == 'POLL':
+        _ensure_poll_widget(current_slide)
+        poll_results = poll_results_for_slide(current_slide)
 
     return render(request, 'core/present.html', {
         'presentation': presentation,
@@ -291,6 +358,16 @@ def update_poll_slide(request, slide_id):
             text=text,
             is_correct=bool(option.get('isCorrect', False)),
         )
+    slide.save(update_fields=['content'])
+
+    widget = _ensure_poll_widget(slide)
+    widget.answer_options.all().delete()
+    for index, text in enumerate(options, start=1):
+        text = str(text).strip()[:50]
+        if text:
+            AnswerOption.objects.create(
+                id_widget=widget, number=index, text=text
+            )
 
     return JsonResponse({
         'success': True,
@@ -318,6 +395,15 @@ def delete_slide(request, slide_id):
         if remaining.number != index:
             remaining.number = index
             remaining.save(update_fields=['number'])
+    presentation = slide.id_presentation
+
+    with transaction.atomic():
+        slide.delete()
+        for index, s in enumerate(
+            presentation.slides.order_by('number'), start=1
+        ):
+            s.number = index
+            s.save(update_fields=['number'])
 
     return JsonResponse({'success': True})
 

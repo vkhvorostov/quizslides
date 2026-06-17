@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static i18n %}
 
-{% block title %}{{ presentation.name }} — {% trans "Показ" %}{% endblock %}
+{% block title %}{{ presentation.name }} — {% trans "Presentation mode" %}{% endblock %}
 
 {% block content %}
 <style>
@@ -24,13 +24,13 @@
     <header class="bg-white border-bottom py-2 px-4 d-flex justify-content-between align-items-center">
         <div class="d-flex align-items-center gap-3">
             <a href="{% url 'core:editor' presentation.id_presentation %}" class="btn btn-outline-secondary btn-sm">
-                &larr; {% trans "Редактор" %}
+                &larr; {% trans "Editor" %}
             </a>
             <h4 class="mb-0">{{ presentation.name }}</h4>
         </div>
         {% if session %}
         <div class="text-end">
-            <small class="text-muted d-block">{% trans "Код для зрителей" %}</small>
+            <small class="text-muted d-block">{% trans "Audience code" %}</small>
             <span class="fs-3 fw-bold">{{ session.code }}</span>
         </div>
         {% endif %}
@@ -45,45 +45,38 @@
             {% endif %}
 
             {% if current_slide.slide_type == 'POLL' %}
-            <div class="d-flex flex-column align-items-center w-100">
-                <h2 id="poll-question" class="mb-3 slide-multiline w-100" style="white-space: pre-wrap; text-align: center;">{% if current_slide.content %}{{ current_slide.content }}{% else %}{% trans "Опрос" %}{% endif %}</h2>
-                <p class="text-muted mb-3 text-center">
-                    {% trans "Проголосовало" %}: <strong id="poll-total-voters">{{ poll_results.total_voters|default:0 }}</strong>
-                    {% trans "участник(ов)" %}
-                </p>
-
-                <div class="mb-3">
-                    <span class="badge bg-info text-dark" id="poll-timer-display">{% trans "Таймер не задан" %}</span>
-                </div>
-
-                <div class="mb-3 chart-toggle btn-group" role="group">
-                    <button type="button" class="btn btn-sm btn-outline-secondary active" data-chart="bar">{% trans "Столбцы" %}</button>
-                    <button type="button" class="btn btn-sm btn-outline-secondary" data-chart="horizontal">{% trans "Полосы" %}</button>
-                    <button type="button" class="btn btn-sm btn-outline-secondary" data-chart="pie">{% trans "Круг" %}</button>
-                </div>
-
-                <div id="poll-results-live" style="width:100%;"></div>
-
-                <p class="text-center text-muted small mt-3">{% trans "Голосуют только зрители по коду. Вы — организатор." %}</p>
+            <h2 id="poll-question" class="text-center mb-3 slide-multiline" style="white-space: pre-wrap;">
+                {% if current_slide.content %}{{ current_slide.content }}{% else %}{% trans "Poll" %}{% endif %}
+            </h2>
+            <p class="text-center text-muted mb-3">
+                {% trans "Voted" %}: <strong id="poll-total-voters">{{ poll_results.total_voters|default:0 }}</strong>
+                {% trans "participants" %}
+            </p>
+            <div class="text-center mb-3 chart-toggle btn-group" role="group">
+                <button type="button" class="btn btn-sm btn-outline-secondary active" data-chart="bar">{% trans "Columns" %}</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" data-chart="horizontal">{% trans "Bars" %}</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" data-chart="pie">{% trans "Pie" %}</button>
             </div>
+            <div id="poll-results-live"></div>
+            <p class="text-center text-muted small mt-3">{% trans "Only viewers with the code can vote. You are the organizer." %}</p>
             {% else %}
             <div class="fs-4 slide-multiline" style="white-space: pre-wrap;">
-                {% if current_slide.content %}{{ current_slide.content }}{% else %}{% trans "Пустой слайд" %}{% endif %}
+                {% if current_slide.content %}{{ current_slide.content }}{% else %}{% trans "Empty slide" %}{% endif %}
             </div>
             {% endif %}
         </div>
 
         <div class="d-flex align-items-center gap-3 mt-4">
             {% if current_index > 1 %}
-            <a href="?slide={{ current_index|add:-1 }}" class="btn btn-outline-primary">&larr; {% trans "Назад" %}</a>
+            <a href="?slide={{ current_index|add:-1 }}" class="btn btn-outline-primary">&larr; {% trans "Back" %}</a>
             {% else %}
-            <span class="btn btn-outline-secondary disabled">&larr; {% trans "Назад" %}</span>
+            <span class="btn btn-outline-secondary disabled">&larr; {% trans "Back" %}</span>
             {% endif %}
-            <span class="text-muted">{{ current_index }} / {{ total_slides }}</span>
+            <span class="text-muted">{% trans "Slide" %} {{ current_slide.number }} ({{ current_index }} / {{ total_slides }})</span>
             {% if current_index < total_slides %}
-            <a href="?slide={{ current_index|add:1 }}" class="btn btn-outline-primary">{% trans "Вперёд" %} &rarr;</a>
+            <a href="?slide={{ current_index|add:1 }}" class="btn btn-outline-primary">{% trans "Next" %} &rarr;</a>
             {% else %}
-            <span class="btn btn-outline-secondary disabled">{% trans "Вперёд" %} &rarr;</span>
+            <span class="btn btn-outline-secondary disabled">{% trans "Next" %} &rarr;</span>
             {% endif %}
         </div>
     </main>

@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
-
+from django.utils.translation import gettext as _
 
 def signup_view(request):
     """Представление для регистрации нового пользователя"""
@@ -11,7 +11,7 @@ def signup_view(request):
         if form.is_valid():
             user = form.save()
             username = form.cleaned_data.get('username')
-            messages.success(request, f'Аккаунт {username} успешно создан! Теперь войдите в систему.')
+            messages.success(request, _('Account %(username)s has been successfully created! Please log in.') % {'username': username})
             return redirect('accounts:login')
     else:
         form = UserCreationForm()
@@ -20,5 +20,5 @@ def signup_view(request):
 
 @login_required
 def profile_view(request):
-    """Профиль: перенаправление на главную (создание презентаций там)."""
-    return redirect('index')
+    """Профиль пользователя со списком презентаций."""
+    return render(request, 'accounts/profile.html')
