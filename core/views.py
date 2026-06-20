@@ -109,34 +109,6 @@ def editor_view(request, presentation_id):
 
 
 @login_required
-def start_presentation(request, presentation_id):
-    if request.method != 'POST':
-        return redirect('core:editor', presentation_id=presentation_id)
-
-    presentation = get_object_or_404(
-        Presentation, id_presentation=presentation_id, id_user=request.user
-    )
-    if not presentation.slides.exists():
-        messages.error(request, 'Добавьте хотя бы один слайд перед запуском.')
-        return redirect('core:editor', presentation_id=presentation_id)
-
-    if presentation.id_session_id and presentation.id_session.status:
-        return redirect('core:present', presentation_id=presentation_id)
-
-    session = Session.objects.create(
-        status=True,
-        time_end=timezone.now() + timedelta(hours=24),
-        max_count_people=100,
-        code=_generate_session_code(),
-        id_user=request.user,
-    )
-    presentation.id_session = session
-    presentation.status = True
-    presentation.save(update_fields=['id_session', 'status'])
-    return redirect('core:present', presentation_id=presentation_id)
-
-
-@login_required
 def present_view(request, presentation_id):
     presentation = get_object_or_404(
         Presentation, id_presentation=presentation_id, id_user=request.user
@@ -147,6 +119,9 @@ def present_view(request, presentation_id):
         return redirect('core:editor', presentation_id=presentation_id)
     if not presentation.id_session_id:
         return redirect('core:editor', presentation_id=presentation_id)
+
+
+@login_required
 @require_POST
 def start_presentation(request, presentation_id):
     presentation = get_object_or_404(
@@ -358,16 +333,6 @@ def update_poll_slide(request, slide_id):
             text=text,
             is_correct=bool(option.get('isCorrect', False)),
         )
-    slide.save(update_fields=['content'])
-
-    widget = _ensure_poll_widget(slide)
-    widget.answer_options.all().delete()
-    for index, text in enumerate(options, start=1):
-        text = str(text).strip()[:50]
-        if text:
-            AnswerOption.objects.create(
-                id_widget=widget, number=index, text=text
-            )
 
     return JsonResponse({
         'success': True,
@@ -385,16 +350,6 @@ def delete_slide(request, slide_id):
         id_slide=slide_id,
         id_presentation__id_user=request.user,
     )
-    presentation_id = slide.id_presentation_id
-    slide.delete()
-
-    for index, remaining in enumerate(
-        Slide.objects.filter(id_presentation_id=presentation_id).order_by('number'),
-        start=1,
-    ):
-        if remaining.number != index:
-            remaining.number = index
-            remaining.save(update_fields=['number'])
     presentation = slide.id_presentation
 
     with transaction.atomic():
