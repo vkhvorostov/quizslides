@@ -312,10 +312,6 @@ msgstr "Опрос"
 msgid "Voted"
 msgstr "Проголосовало"
 
-#: templates/core/present.html:44
-msgid "participants"
-msgstr "участник(ов)"
-
 #: templates/core/present.html:47
 msgid "Columns"
 msgstr "Столбцы"

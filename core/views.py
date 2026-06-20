@@ -1,4 +1,5 @@
 import json
+import random
 from datetime import timedelta
 
 from django.contrib import messages
@@ -16,6 +17,7 @@ from .poll_live import (
     get_active_presentation,
     get_current_slide,
     get_member_from_request,
+    get_poll_time_left,
     poll_results_for_slide,
 )
 
@@ -38,12 +40,22 @@ def _poll_options_payload(slide):
     if not widget:
         return []
     return [
-        {'id': opt.id_answer_option, 'number': opt.number, 'text': opt.text}
+        {
+            'id': opt.id_answer_option,
+            'number': opt.number,
+            'text': opt.text,
+            'is_correct': opt.is_correct,
+        }
         for opt in widget.answer_options.order_by('number')
     ]
 
 
 def _generate_session_code():
+    for _ in range(50):
+        code = f'{random.randint(0, 999999):06d}'
+        if not Session.objects.filter(code=code, status=True).exists():
+            return code
+    raise RuntimeError('Не удалось сгенерировать код сессии')
     while True:
         code = get_random_string(6, allowed_chars=SESSION_CODE_ALPHABET)
         if not Session.objects.filter(code=code, status=True).exists():
@@ -97,6 +109,19 @@ def editor_view(request, presentation_id):
 
 
 @login_required
+def present_view(request, presentation_id):
+    presentation = get_object_or_404(
+        Presentation, id_presentation=presentation_id, id_user=request.user
+    )
+    slides = list(presentation.slides.order_by('number'))
+    if not slides:
+        messages.error(request, 'Добавьте хотя бы один слайд перед запуском.')
+        return redirect('core:editor', presentation_id=presentation_id)
+    if not presentation.id_session_id:
+        return redirect('core:editor', presentation_id=presentation_id)
+
+
+@login_required
 @require_POST
 def start_presentation(request, presentation_id):
     presentation = get_object_or_404(
@@ -144,6 +169,18 @@ def present_presentation(request, presentation_id):
     current_index = max(1, min(current_index, len(slides)))
 
     session = presentation.id_session
+    if session.current_slide_number != current_index or session.current_slide_started_at is None:
+        session.current_slide_number = current_index
+        session.current_slide_started_at = timezone.now()
+        session.save(update_fields=['current_slide_number', 'current_slide_started_at'])
+
+    current_slide = slides[current_index - 1]
+    poll_results = None
+    poll_options = None
+    if current_slide.slide_type == 'POLL':
+        _ensure_poll_widget(current_slide)
+        poll_results = poll_results_for_slide(current_slide)
+        poll_options = _poll_options_payload(current_slide)
     if session.current_slide_number != current_index:
         session.current_slide_number = current_index
         session.save(update_fields=['current_slide_number'])
@@ -161,6 +198,7 @@ def present_presentation(request, presentation_id):
         'current_index': current_index,
         'total_slides': len(slides),
         'poll_results': poll_results,
+        'poll_options': poll_options,
     })
 
 @login_required
@@ -249,6 +287,8 @@ def get_slide(request, slide_id):
     if slide.slide_type == 'POLL':
         _ensure_poll_widget(slide)
         payload['answer_options'] = _poll_options_payload(slide)
+        payload['timer'] = slide.timer or 0
+        payload['allow_change_answer'] = slide.allow_change_answer
     return JsonResponse(payload)
 
 
@@ -271,20 +311,28 @@ def update_poll_slide(request, slide_id):
 
     content = data.get('content', '').strip()
     options = data.get('options', [])
+    timer = data.get('timer')
+    allow_change_answer = data.get('allowChangeAnswer', False)
     if not options:
         return JsonResponse({'success': False, 'error': 'Добавьте хотя бы один вариант'}, status=400)
 
     slide.content = content
-    slide.save(update_fields=['content'])
+    slide.timer = int(timer) if isinstance(timer, int) and timer > 0 else None
+    slide.allow_change_answer = bool(allow_change_answer)
+    slide.save(update_fields=['content', 'timer', 'allow_change_answer'])
 
     widget = _ensure_poll_widget(slide)
     widget.answer_options.all().delete()
-    for index, text in enumerate(options, start=1):
-        text = str(text).strip()[:50]
-        if text:
-            AnswerOption.objects.create(
-                id_widget=widget, number=index, text=text
-            )
+    for index, option in enumerate(options, start=1):
+        text = str(option.get('text', '')).strip()[:50]
+        if not text:
+            continue
+        AnswerOption.objects.create(
+            id_widget=widget,
+            number=index,
+            text=text,
+            is_correct=bool(option.get('isCorrect', False)),
+        )
 
     return JsonResponse({
         'success': True,
@@ -417,6 +465,10 @@ def cast_poll_vote(request, code):
     if not slide or slide.slide_type != 'POLL':
         return JsonResponse({'success': False, 'error': 'Сейчас нельзя голосовать'}, status=400)
 
+    remaining = get_poll_time_left(session, slide)
+    if slide.timer and remaining == 0:
+        return JsonResponse({'success': False, 'error': 'Время вышло'}, status=400)
+
     try:
         data = json.loads(request.body)
         option_id = int(data.get('answer_option_id'))
@@ -428,6 +480,10 @@ def cast_poll_vote(request, code):
         id_answer_option=option_id,
         id_widget__id_slide=slide,
     )
+
+    existing_vote = PollVote.objects.filter(id_slide=slide, id_member=member).first()
+    if existing_vote and not slide.allow_change_answer:
+        return JsonResponse({'success': False, 'error': 'Изменение ответа запрещено'}, status=400)
 
     PollVote.objects.update_or_create(
         id_slide=slide,
@@ -465,4 +521,7 @@ def presentation_poll_results(request, presentation_id):
         'current_slide': index,
         'question': slide.content,
         'results': poll_results_for_slide(slide),
+        'timer': slide.timer or 0,
+        'remaining_seconds': get_poll_time_left(session, slide) or 0,
+        'allow_change_answer': slide.allow_change_answer,
     })

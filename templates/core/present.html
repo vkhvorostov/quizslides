@@ -9,6 +9,15 @@
     .poll-bar-fill { height: 100%; background: linear-gradient(90deg, #198754, #20c997); transition: width 0.4s ease; }
     .poll-pie { width: 220px; height: 220px; border-radius: 50%; margin: 0 auto; }
     .chart-toggle .active { font-weight: 600; }
+    /* Ensure the poll title is strictly centered for presenter (admin) view */
+    #poll-question {
+        width: 100%;
+        text-align: center !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
 </style>
 
 <div class="d-flex flex-column vh-100">
@@ -75,6 +84,8 @@
 
 {% if current_slide.slide_type == 'POLL' %}
 <input type="hidden" id="presentation-id" value="{{ presentation.id_presentation }}">
+<input type="hidden" id="poll-timer" value="{{ current_slide.timer|default:0 }}">
+<input type="hidden" id="poll-options-data" value='{{ poll_options|json_script:"initial-poll-options" }}'>
 {% if poll_results %}{{ poll_results|json_script:"initial-poll-results" }}{% endif %}
 <script src="{% static 'js/present-live.js' %}?v=1"></script>
 {% endif %}
